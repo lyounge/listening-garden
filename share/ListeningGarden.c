@@ -1,5 +1,5 @@
 ﻿/* สวนรับฟัง ฉบับส่งงาน | gcc -std=c11 ListeningGarden.c -o GardenClass.exe
-   บันทึกซอร์สเป็น UTF-8 เพื่อแสดงภาษาไทยและภาพจุด test test test eiei */
+   บันทึกซอร์สเป็น UTF-8 เพื่อแสดงภาษาไทยและภาพจุด  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>  /* ใช้เวลาเริ่มต้นลำดับเลขสุ่มเพียงครั้งเดียว */
