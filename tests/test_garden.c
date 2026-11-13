@@ -1,4 +1,7 @@
-﻿#include "garden.h"
+#define main garden_main
+#include "../share/ListeningGarden.c"
+#undef main
+#include <stdbool.h>
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
