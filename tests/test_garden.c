@@ -23,7 +23,7 @@ int main(void) {
         assert(memcmp(player.bag,d.stock,sizeof d.stock)==0);
         for(int i=0;i<TYPES;i++) groups[i/2]+=player.bag[i];
         assert(groups[0]+groups[1]+groups[2]==STOCK);
-        bool direct=groups[0]>=3 && groups[1]>=3 && groups[2]>=3;
+        bool direct=groups[0]*10>=challenge[d.weather][0] && groups[1]*10>=challenge[d.weather][1] && groups[2]*10>=challenge[d.weather][2];
         assert(direct==(d.kind==0));
         for (int i=0;i<d.answer.count;i++) {
             Move m=d.answer.moves[i];
@@ -56,7 +56,8 @@ int main(void) {
             assert(!evaluate(incomplete,w).perfect);
         }
         int balanced[]={30,30,30};
-        assert(evaluate(balanced,w).perfect);
+        assert(!evaluate(balanced,w).perfect);
+        assert(evaluate(challenge[w],w).perfect);
         int small[]={10,30,30};
         assert(evaluate(small,w).health==100);
     }

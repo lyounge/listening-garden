@@ -50,9 +50,10 @@ try:
     send(1)
     screen = send(2)
     bag = [int(re.search(r"(?<!\S)" + n + r" (\d+)", screen).group(1)) for n in names]
+    goals = list(map(int, re.search(r"เป้าออกดอกคืนนี้: ใบ (\d+) / ราก (\d+) / เปลือก (\d+)", screen).groups()))
     values = [0, 0, 0]
     for group in range(3):
-        while sum(bag[group*2:group*2+2]) + values[group]//10 < 3:
+        while sum(bag[group*2:group*2+2]) + values[group]//10 < goals[group]//10:
             picks = [next(i for i in range(g*2, g*2+2) if bag[i])
                      for g in range(3) if g != group]
             screen = send(4)
@@ -66,11 +67,11 @@ try:
             values[group] += 10
     send(1)
     for group in range(3):
-        while values[group] < 30:
+        while values[group] < goals[group]:
             screen = send(group+1)
             num, name, count = re.findall(
                 r"(\d+)\. ใช้(สุข|ภูมิใจ|เศร้า|กลัว|โกรธ|ผิดหวัง) \(เหลือ (\d+) ชิ้น\)", screen)[0]
-            amount = min(int(count), (30-values[group])//10)
+            amount = min(int(count), (goals[group]-values[group])//10)
             send(num)
             if int(count) > 1:
                 send(amount)

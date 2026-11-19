@@ -41,3 +41,4 @@ tests/play_game.py permanently checks malformed/overflow/truncated input, full/b
 2026-11-20: Role-based dialogue polish focused on question-answer continuity and natural speech. Updated all three C copies and rebuilt Windows EXE. Strict C11 builds and gameplay suite passed on each copy.
 Dialogue continuity pass: edited all three copies, rebuilt EXE, checked all 36 character/choice combinations and six full EXE rounds. No rules changed.
 Added optional weather challenges and live planting previews. Existing score and Perfect unchanged; the optional challenge may not be reachable with every inventory. Gameplay suite passed.
+Weather-specific flowering targets and optional last-customer crystal exchange. Original inventory guaranteed Perfect; optional exchange can change feasibility. Strict builds, 10000-day tests, full gameplay and exchange smoke passed.
