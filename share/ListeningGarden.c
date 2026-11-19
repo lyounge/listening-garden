@@ -1,4 +1,4 @@
-﻿/* สวนรับฟัง ฉบับส่งงาน | gcc -std=c11 ListeningGarden.c -o GardenClass.exe
+﻿/* Grow a (Feeling) Garden | gcc -std=c11 ListeningGarden.c -o GardenClass.exe
    บันทึกซอร์สเป็น UTF-8 เพื่อแสดงภาษาไทยและภาพจุด  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -434,11 +434,18 @@ void grow_tree(const Plan *p) {
 
 /* เมนูและลำดับการเล่น */
 /* อ่านทีละบรรทัด ถ้าพิมพ์ผิด ให้เลือกใหม่โดยไม่เสียผลึก */
+/* ใช้หัวข้อรูปแบบเดียวกันทุกหน้าหลัก */
+void heading(const char *title) {
+    printf("\n  ----------------------------------------------------\n");
+    printf("  %s\n", title);
+    printf("  ----------------------------------------------------\n");
+}
+
 int choose(int low, int high) {
     char line[100], extra;
     int answer;
     for (;;) {
-        printf("> ");
+        printf("\n  เลือก > ");
         fflush(stdout);
         if (!fgets(line, sizeof line, stdin)) {
             inputEnded=1;
@@ -468,9 +475,11 @@ void meet_customers(const Day *day, Plan *plan) {
 
     for (int i=0; i<VISITS; i++) {
         const Story *s=&stories[day->guest[i]];
-        printf("\n%02d:00  |  %s\n“%s”\n", 9+i, s->name, s->story);
+        heading(s->name);
+        printf("  %02d:00  |  ลูกค้าคนที่ %d / %d\n\n",9+i,i+1,VISITS);
+        printf("“%s”\n\n",s->story);
 
-        printf("1. %s\n2. %s\n3. ถามว่าอยากให้ช่วยอะไร\n",s->question,s->otherQuestion);
+        printf("  [1] %s\n  [2] %s\n  [3] ถามว่าอยากให้ช่วยอะไร\n",s->question,s->otherQuestion);
         int answer=choose(1,3);
         if (inputEnded) return;
         if (answer==3) {
@@ -518,16 +527,31 @@ void show_aunt_ing(void) {
 }
 
 void welcome(void) {
-    printf("สวนรับฟัง\n");
-    Plan title_tree={0};
-    for (int i=0; i<3; i++) title_tree.value[i]=30;
-    title_tree.count=9; /* ต้นไม้ประดับหน้าเมนู */
-    show_tree(&title_tree,NULL);
-    printf("1. เล่นเลย\n");
-    printf("2. รู้จักเกม ดูวิธีเล่นและสูตรผสม\n");
+    printf("\n");
+    printf("  ====================================================\n");
+    printf("               Grow a (Feeling) Garden\n");
+    printf("                       สวนรับฟัง\n");
+    printf("  ====================================================\n\n");
+    printf("                    . . . . .\n");
+    printf("                . :           : .\n");
+    printf("              .:    .     .      :.\n");
+    printf("             :    .   . .   .     :\n");
+    printf("              : .     :     .   .:\n");
+    printf("                : . . : . . . :\n");
+    printf("                     : :\n");
+    printf("                     : :\n");
+    printf("                 . . : : . .\n\n");
+    printf("       รับฟังเรื่องราว แล้วปลูกสวนจากความรู้สึก\n\n");
+    printf("  ----------------------------------------------------\n");
+    printf("    [1]  เปิดร้าน\n");
+    printf("         เริ่มเรื่องกับป้าอิง\n");
+    printf("    [2]  ก่อนเริ่มปลูก\n");
+    printf("         รู้จักเกม วิธีเล่น และสูตรผสม\n\n");
+    printf("  ----------------------------------------------------\n");
+    printf("  พิมพ์หมายเลข แล้วกด Enter\n");
     if (choose(1,2)!=2) return;
 
-    printf("\nเกมนี้เป็นแนวไหน?\n");
+    heading("ก่อนเริ่มปลูก");
     printf("คุณเปิดร้านเล็ก ๆ ให้คนแวะมาเล่าเรื่อง แลกกับผลึกความรู้สึก\n");
     printf("พอร้านปิด ผลึกที่เก็บไว้จะกลายเป็นปริศนา คุณจะใช้มันเลี้ยงต้นไม้ยังไงให้ผ่านคืนนี้?\n");
     printf("\nวิธีเล่น\n");
@@ -621,10 +645,11 @@ int mix_fertilizer(Plan *plan) {
 void planting(const Day *day, Plan *plan) {
     int before[STOCK], actions=0;
     while (!inputEnded) {
-        printf("\n17:00  โต๊ะปลูก  •  คืนนี้%s\n",weather[day->weather]);
+        heading("โต๊ะปลูก");
+        printf("  17:00  |  คืนนี้%s\n\n",weather[day->weather]);
         printf("อยากให้ต้นออกดอก เลี้ยงทั้งสามส่วนให้เท่ากัน ด้านละอย่างน้อย 30\n");
-        printf("ใบ %d   ราก %d   เปลือก %d\n",plan->value[0],plan->value[1],plan->value[2]);
-        printf("1. ใส่ปุ๋ย   2. ดูหรือแก้แผน   3. ปลูกและปิดร้าน   4. ผสมปุ๋ย\n");
+        printf("\n  ใบ %d   |   ราก %d   |   เปลือก %d\n\n",plan->value[0],plan->value[1],plan->value[2]);
+        printf("  [1] ใส่ปุ๋ย\n  [2] ดูหรือแก้แผน\n  [3] ปลูกและปิดร้าน\n  [4] ผสมปุ๋ย\n");
         int action=choose(1,4);
         if (inputEnded) return;
         if (action==1) {
@@ -750,7 +775,8 @@ int main(void) {
         Day day;
         Plan plan={0};
         new_day(&day);
-        printf("\nสวนรับฟัง\n08:00  |  ป้าอิงวางห่อกระดาษลงบนเคาน์เตอร์\n");
+        heading("Grow a (Feeling) Garden");
+        printf("  08:00  |  ป้าอิงวางห่อกระดาษลงบนเคาน์เตอร์\n\n");
         show_aunt_ing();
         printf("“ฝากเมล็ดไว้สักคืนนะ วันนี้ใครแวะมาก็ลองฟังเขาดู พอตกเย็นค่อยเอาผลึกที่เขาฝากไว้มาปลูกกัน”\n");
         printf("ป้าอิงวางสมุดดูแลเมล็ดไว้ข้างห่อกระดาษ แล้วชี้ให้ดูพยากรณ์คืนนี้\n");

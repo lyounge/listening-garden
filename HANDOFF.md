@@ -15,3 +15,7 @@ Updated 2026-11-13.
 Rewrote all 12 customer records, including both question paths, help requests/actions, and morning callbacks. Voice: concrete everyday speech, distinct reactions, no instant resolution required. Used kien-thai; native-model route unavailable, drafted and audited directly.
 Only story data changed; game logic is byte-for-byte unchanged after normalizing the story block. Strict C11 game/test builds and 10000-day tests passed. Three complete console rounds covering dialogue options 1/2/3 passed with eight crystal gifts each. Rebuilt share/GardenClass.exe.
 Removed user-authorized untracked exercises test1-4 (.c/.exe), tesst5.c, EmployeeData.txt and LibraryBooks.txt from share. Backup before removal includes these files in LocalAppData/ListeningGarden/Backups/garden-20261119-164751-7434524-97f5edc.zip.
+
+## 2026-11-19 Console presentation
+Title is Grow a (Feeling) Garden, with สวนรับฟัง as Thai subtitle. Compact decorative text tree on welcome screen; actual growth trees unchanged. Added heading() using printf, separated numbered menu rows, customer progress and clearer input prompt. No new headers or libraries.
+Validation: strict C11 builds, 10000-day rule tests, direct-play and help paths through complete rounds passed. Windows GUI preview launch did not expose a window; console output verified programmatically. Rebuild the shipped EXE with each UI change.
