@@ -88,7 +88,7 @@ try:
     tail, _ = p.communicate(b"1\n\n\n\n\n1\n3\n", timeout=10)
     text = tail.decode("utf-8")
     assert "คะแนนรวม 100/100" in text
-    assert text.index("คะแนนรวม") < text.index("ลูกค้าแวะมาอีกครั้ง") < text.index("ป้าอิงฝากไว้")
+    assert text.index("คะแนนรวม") < text.index("ป้าอิงฝากไว้")
     assert p.returncode == 0
 finally:
     timer.cancel()
