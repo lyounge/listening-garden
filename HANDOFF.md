@@ -21,3 +21,7 @@ Title is Grow a (Feeling) Garden, with สวนรับฟัง as Thai subti
 Validation: strict C11 builds, 10000-day rule tests, direct-play and help paths through complete rounds passed. Windows GUI preview launch did not expose a window; console output verified programmatically. Rebuild the shipped EXE with each UI change.
 User correction: restored original title tree, split help into morning/evening and single-column care notes. Updated shipped EXE using a recoverable rename of the running old executable. Final shipped EXE direct/help rounds and 10000-day tests passed. Thai glyph spacing remains terminal/font-dependent; no terminal settings changed.
 2026-11-19: Welcome choices renamed to เริ่มเล่น (เปิดร้าน) and คู่มือเกม. Strict C11 build passed; rebuilt shipped EXE. Menu behavior unchanged.
+
+## 2026-11-20 Clear instructions and results
+Removed redundant Aunt Ing subtitle under start. Help explains mixing shortages/cost/example, survival versus optional Perfect flowers, all weather requirements and health damage. Forecasts now describe threats and requirements on separate lines. Dialogue continuation and crystal rewards separated clearly. Ending now shows result, actual values and deficits before a shorter Aunt reflection; returning customer has their own heading.
+Gameplay and choice sequence unchanged. Strict C11 builds, 10000-day tests, all three conversation paths through full rounds (including help and result labels) passed. Rebuilt shipped EXE.
