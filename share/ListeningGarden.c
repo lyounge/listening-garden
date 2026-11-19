@@ -728,33 +728,53 @@ int feed(Plan *plan) {
 }
 
 int mix_fertilizer(Plan *plan) {
-    int options[TYPES], count=0, groups[3]={0};
-    printf("\nโต๊ะผสมปุ๋ย\n");
-    for (int i=0; i<TYPES; i++) {
-        if (!plan->bag[i]) continue;
-        groups[i/2]=1;
-        options[count++]=i;
-        printf("%d. %s × %d (กลุ่ม%s)\n",count,crystal[i],plan->bag[i],part[i/2]);
+    for (;;) {
+        int options[TYPES], count=0, groups[3]={0};
+        printf("\nโต๊ะผสมปุ๋ย\n");
+        for (int i=0; i<TYPES; i++) {
+            if (!plan->bag[i]) continue;
+            groups[i/2]=1;
+            options[count++]=i;
+            printf("%d. %s × %d (กลุ่ม%s)\n",count,crystal[i],plan->bag[i],part[i/2]);
+        }
+        printf("[7] ดูสูตรที่ทำได้ตอนนี้  [0] กลับโต๊ะปลูก\n");
+        if (groups[0]+groups[1]+groups[2]<2) {
+            printf("ต้องมีผลึกต่างกลุ่มกันสองชิ้นจึงจะผสมได้\n");
+        }
+        printf("เลือกผลึกชิ้นแรก หรือ 0 เพื่อกลับโต๊ะปลูก\n");
+        int first=choose(0,7);
+        if (first==7) {
+            heading("สูตรที่ใช้ผลึกในคลังได้");
+            if (groups[0]+groups[1]+groups[2]<2)
+                printf("ยังไม่มีสูตรที่ทำได้\n");
+            for (int a=0;a<TYPES;a++)
+                for (int b=a+1;b<TYPES;b++)
+                    if (a/2!=b/2 && plan->bag[a] && plan->bag[b])
+                        describe(make_move(a,b));
+            continue;
+        }
+        if (first>count) {
+            printf("ไม่มีผลึกตามเลขนี้\n");
+            continue;
+        }
+        if (!first) return 0;
+        printf("เลือกผลึกชิ้นที่สอง หรือ 0 เพื่อกลับโต๊ะปลูก\n");
+        int second=choose(0,count);
+        if (!second) return 0;
+        Move move={options[first-1],options[second-1]};
+        if (move.a/2==move.b/2) {
+            printf("ผลึกสองชิ้นนี้อยู่กลุ่มเดียวกัน จึงผสมกันไม่ได้\n");
+            return 0;
+        }
+        describe(move);
+        int limit=smaller(plan->bag[move.a],plan->bag[move.b]);
+        printf("ผสมกี่ชุด? 1–%d (0 ยกเลิก) ชุดละ 10 หน่วย\n",limit);
+        int amount=choose(0,limit);
+        if (!amount) return 0;
+        for (int i=0;i<amount;i++) apply(plan,move);
+        printf("ผสม %d ชุด เติม%s +%d\n",amount,part[target(move)],10*amount);
+        return 1;
     }
-    if (groups[0]+groups[1]+groups[2]<2) {
-        printf("ต้องมีผลึกต่างกลุ่มกันสองชิ้นจึงจะผสมได้\n");
-        return 0;
-    }
-    printf("เลือกผลึกชิ้นแรก หรือ 0 เพื่อกลับโต๊ะปลูก\n");
-    int first=choose(0,count);
-    if (!first) return 0;
-    printf("เลือกผลึกชิ้นที่สอง หรือ 0 เพื่อกลับโต๊ะปลูก\n");
-    int second=choose(0,count);
-    if (!second) return 0;
-    Move move={options[first-1],options[second-1]};
-    if (move.a/2==move.b/2) {
-        printf("ผลึกสองชิ้นนี้อยู่กลุ่มเดียวกัน จึงผสมกันไม่ได้\n");
-        return 0;
-    }
-    describe(move);
-    printf("1. ผสมแล้วใส่ลงต้นไม้   0. กลับโต๊ะปลูก\n");
-    if (!choose(0,1)) return 0;
-    return apply(plan,move);
 }
 
 void planting(const Day *day, Plan *plan) {
@@ -762,16 +782,11 @@ void planting(const Day *day, Plan *plan) {
     while (!inputEnded) {
         heading("โต๊ะปลูก");
         printf("  17:00  |  คืนนี้%s\n\n",weather[day->weather]);
-        int goals[3]={10,10,10};
-        if (day->weather==0 || day->weather==1) goals[1]=larger(30,plan->value[0]);
-        if (day->weather==0) goals[2]=larger(20,plan->value[0]/2);
-        if (day->weather==2) goals[2]=larger(30,plan->value[0]);
-        printf("  เป้าปลอดภัยคืนนี้ (ไม่เสียสุขภาพ)\n");
-        for (int i=0;i<3;i++)
-            printf("  %s: %d / ต้องการ %d\n",part[i],plan->value[i],goals[i]);
         const int *goal=challenge[day->weather];
         printf("  เป้าออกดอกคืนนี้: ใบ %d / ราก %d / เปลือก %d ขึ้นไป\n",
                goal[0],goal[1],goal[2]);
+        for (int i=0;i<3;i++)
+            printf("  %s: มี %d / เป้า %d\n",part[i],plan->value[i],goal[i]);
         if (plan->count) {
             Result preview=evaluate(plan->value,day->weather);
             printf("  คาดการณ์: %s | สุขภาพ %d/100 | ออกดอก %s\n",
@@ -783,7 +798,7 @@ void planting(const Day *day, Plan *plan) {
         for (int i=0;i<TYPES;i++)
             printf("    %s %d%s",crystal[i],plan->bag[i],i%2 ? "\n" : " / ");
 
-        printf("\n  ใบ %d   |   ราก %d   |   เปลือก %d\n\n",plan->value[0],plan->value[1],plan->value[2]);
+        printf("\n");
         printf("  [1] ใส่ปุ๋ย\n  [2] ดูหรือแก้แผน\n  [3] ปลูกและปิดร้าน\n  [4] ผสมปุ๋ย\n");
         int action=choose(1,4);
         if (inputEnded) return;
@@ -870,7 +885,7 @@ const char *ending(const Plan *p, Result r, int weather_type) {
 /* ผลึกชนิดเดียวกันใช้ของลูกค้าที่มาก่อน เลือกเล่าถึงคนที่ฝาก
    วัตถุดิบของสูตรแรก ถ้าไม่ได้ผสมให้เล่าถึงผลึกชิ้นแรกแทน */
 void visitor_returns(const Day *day, const Plan *p) {
-    if (!p->count || day->changed_gift) return;
+    if (!p->count) return;
     int index=0;
     for (int i=0; i<p->count; i++) {
         if (p->moves[i].b>=0) { index=i; break; }
@@ -882,8 +897,17 @@ void visitor_returns(const Day *day, const Plan *p) {
     }
     for (int i=0; i<VISITS; i++) {
         int id=day->guest[i];
+        if (i==VISITS-1 && day->changed_gift &&
+            (stories[id].type+2)%TYPES==type && used==0) {
+            printf("\n%s แวะมาอีกครั้ง\n",stories[id].name);
+            printf("“%s”\n",stories[id].nextMorning);
+            printf("ผลึก%sที่แลกกันเมื่อวานถูกใช้กับต้นนี้ด้วย\n",crystal[type]);
+            break;
+        }
         if (stories[id].type!=type) continue;
-        if (used>=day->gift[i]) { used-=day->gift[i]; continue; }
+        int quantity=day->gift[i];
+        if (i==VISITS-1 && day->changed_gift) quantity--;
+        if (used>=quantity) { used-=quantity; continue; }
         heading("ลูกค้าแวะมาอีกครั้ง");
         printf("  %s เล่าว่า\n",stories[id].name);
         printf("  “%s”\n\n",stories[id].nextMorning);
