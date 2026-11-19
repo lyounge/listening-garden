@@ -1005,7 +1005,7 @@ int main(void) {
         printf("“ฝากเมล็ดไว้สักคืนนะ วันนี้ใครแวะมาก็ลองฟังเขาดู พอตกเย็นค่อยเอาผลึกที่เขาฝากไว้มาปลูกกัน”\n");
         printf("ป้าอิงวางสมุดดูแลเมล็ดไว้ข้างห่อกระดาษ แล้วชี้ให้ดูพยากรณ์คืนนี้\n");
         printf("%s\n", forecast[day.weather]);
-        printf("[1] \n");
+        printf("[1] เปิดร้าน\n");
         if (!choose(1,1)) return 0;
         meet_customers(&day,&plan);
         if (inputEnded) return 0;
