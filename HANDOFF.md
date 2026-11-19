@@ -45,3 +45,4 @@ Weather-specific flowering targets and optional last-customer crystal exchange. 
 Added inventory-filtered recipe lookup and batch mixing with batch undo, streamlined planting targets, and restored gift attribution after trade. Collection deferred. Gameplay suite passed.
 Trade offered only if revised Perfect solution works; mixing stays open; survival and health deficits shown. Build, menu tests and 10000 trade/normal inventories checked.
 Combined duplicate planting hints per part, kept mixing open after quantity cancel (EOF still exits), and aligned trade callback text. Strict build and gameplay checks passed. Day counter deferred.
+Clarified planting hints, flowering deficits and score, added Aunt Ing scene transitions and brief-mode label. Strict build and gameplay tests passed.

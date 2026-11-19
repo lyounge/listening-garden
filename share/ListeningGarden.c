@@ -831,11 +831,8 @@ void planting(const Day *day, Plan *plan) {
         Result conditions=evaluate(plan->value,day->weather);
         for (int i=0;i<3;i++) {
             int minimum=larger(0,10-plan->value[i]);
-            if (minimum && conditions.missing[i]>minimum)
-                printf("  %s: เติม %d ถึงขั้นต่ำ / เติม %d เพื่อสุขภาพเต็ม\n",
-                       part[i],minimum,conditions.missing[i]);
-            else if (minimum)
-                printf("  ให้รอด: เติม%sอีก %d ให้ถึง 10\n",part[i],minimum);
+            if (minimum)
+                printf("  ขั้นต่ำเพื่อรอด: เติม%sอีก %d\n",part[i],minimum);
             else if (conditions.missing[i])
                 printf("  ให้สุขภาพเต็ม: เติม%sอีก %d จากแผนตอนนี้\n",
                        part[i],conditions.missing[i]);
@@ -885,7 +882,10 @@ void planting(const Day *day, Plan *plan) {
                 while (plan->count) undo(plan);
                 actions=0;
                 printf("คืนผลึกทั้งหมดแล้ว\n");
-            } else if (edit==3) guide(day);
+            } else if (edit==3) {
+                guide(day);
+                printf("\n  กลับโต๊ะปลูก | คืนนี้%s\n",weather[day->weather]);
+            }
         } else {
             if (!plan->count) printf("เมล็ดนี้ยังไม่ได้ใส่ปุ๋ย\n");
             else for (int i=0;i<3;i++)
@@ -989,13 +989,21 @@ void morning(const Day *day,const Plan *p) {
                 printf("  %sมี %d ต้องอย่างน้อย 10 จึงจะอยู่รอด\n",part[i],p->value[i]);
         if (r.missing[1]) printf("  รากขาดอีก %d หน่วย จึงรับมือคืนนี้ได้ไม่เต็มที่\n",r.missing[1]);
         if (r.missing[2]) printf("  เปลือกขาดอีก %d หน่วย จึงรับมือคืนนี้ได้ไม่เต็มที่\n",r.missing[2]);
-        if (!r.perfect && r.health==100)
-            printf("  ยังไม่ออกดอก เพราะปุ๋ยยังไม่ถึงเป้าของคืนนี้\n");
+        if (r.health && !r.perfect) {
+            printf("  สิ่งที่ต้องแก้เพื่อให้ออกดอก\n");
+            for (int i=0;i<3;i++) {
+                int missing=challenge[day->weather][i]-p->value[i];
+                if (missing>0) printf("    %sขาดอีก %d หน่วย\n",part[i],missing);
+            }
+            if (r.health<100) printf("    ต้องผ่านคืนนี้โดยไม่เสียสุขภาพด้วย\n");
+        }
     }
     printf("\n  คะแนนรวม %.0f/100%s\n",r.growth+r.balance+r.weatherScore,
            r.perfect ? "   Perfect!" : "");
     printf("  เติบโต %.1f/30 | ตามเป้า %.1f/40 | สุขภาพ %.1f/30\n",
            r.growth,r.balance,r.weatherScore);
+    printf("  ตามเป้า: คิดจากส่วนที่ใกล้เป้าน้อยที่สุด\n");
+    if (r.perfect) printf("  ป้าอิงชี้ไปที่ยอด “เห็นดอกตรงนั้นไหม บานแล้วลูก!”\n");
     visitor_returns(day,p);
     heading("ป้าอิงฝากไว้");
     printf("  “%s”\n",ending(p,r,day->weather));
@@ -1019,11 +1027,12 @@ int main(void) {
         printf("“ฝากเมล็ดไว้สักคืนนะ วันนี้ใครแวะมาก็ลองฟังเขาดู พอตกเย็นค่อยเอาผลึกที่เขาฝากไว้มาปลูกกัน”\n");
         printf("ป้าอิงวางสมุดดูแลเมล็ดไว้ข้างห่อกระดาษ แล้วชี้ให้ดูพยากรณ์คืนนี้\n");
         printf("%s\n", forecast[day.weather]);
-        printf("[1] เปิดร้าน อ่านบทเต็ม\n[2] เปิดร้าน อ่านแบบย่อ (ผลึกเท่าเดิม)\n");
+        printf("[1] เปิดร้าน อ่านบทเต็ม\n[2] เปิดร้าน อ่านแบบย่อ (ใช้ผลึกชุดเดิม ไม่แลก)\n");
         int mode=choose(1,2);
         if (inputEnded) return 0;
         meet_customers(&day,&plan,mode==2);
         if (inputEnded) return 0;
+        printf("\n  ป้าอิง: “ลูกค้ากลับกันหมดแล้ว เอาผลึกไปดูต้นไม้กันลูก”\n");
         planting(&day,&plan);
         if (inputEnded) return 0;
         grow_tree(&plan);
