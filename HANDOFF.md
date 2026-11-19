@@ -40,3 +40,4 @@ Fixed reproduced long-line spill and integer overflow in choose (bounded two-dig
 tests/play_game.py permanently checks malformed/overflow/truncated input, full/brief rounds, every guide exit, no-fertilizer ending and inventory-planned Perfect. CI now runs these alongside 10000-day C rules. No new game headers.
 2026-11-20: Role-based dialogue polish focused on question-answer continuity and natural speech. Updated all three C copies and rebuilt Windows EXE. Strict C11 builds and gameplay suite passed on each copy.
 Dialogue continuity pass: edited all three copies, rebuilt EXE, checked all 36 character/choice combinations and six full EXE rounds. No rules changed.
+Added optional weather challenges and live planting previews. Existing score and Perfect unchanged; the optional challenge may not be reachable with every inventory. Gameplay suite passed.

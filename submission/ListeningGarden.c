@@ -727,6 +727,14 @@ int mix_fertilizer(Plan *plan) {
     return apply(plan,move);
 }
 
+const int challenge[3][3]={{20,40,30},{30,40,20},{30,20,40}};
+
+int challenge_met(const int value[3], int weather_type) {
+    for (int i=0;i<3;i++)
+        if (value[i]<challenge[weather_type][i]) return 0;
+    return 1;
+}
+
 void planting(const Day *day, Plan *plan) {
     int before[STOCK], actions=0;
     while (!inputEnded) {
@@ -739,6 +747,17 @@ void planting(const Day *day, Plan *plan) {
         printf("  เป้าปลอดภัยคืนนี้ (ไม่เสียสุขภาพ)\n");
         for (int i=0;i<3;i++)
             printf("  %s: %d / ต้องการ %d\n",part[i],plan->value[i],goals[i]);
+        const int *goal=challenge[day->weather];
+        printf("  ท้าประจำคืน: ใบ %d / ราก %d / เปลือก %d ขึ้นไป\n",
+               goal[0],goal[1],goal[2]);
+        printf("  เลือกลุ้นทำโจทย์คืนนี้ หรือจัดสมดุลให้ออกดอก\n");
+        if (plan->count) {
+            Result preview=evaluate(plan->value,day->weather);
+            printf("  คาดการณ์: %s | สุขภาพ %d/100 | โจทย์คืนนี้ %s\n",
+                   preview.health ? "รอด" : "ไม่รอด",preview.health,
+                   preview.health==100 && challenge_met(plan->value,day->weather)
+                   ? "ครบแล้ว" : "ยังไม่ครบ");
+        }
         printf("  อยากออกดอก: ทั้งสามส่วนเท่ากัน อย่างน้อย 30\n");
         printf("  คลังผลึก\n");
         for (int i=0;i<TYPES;i++)
@@ -883,6 +902,8 @@ void morning(const Day *day,const Plan *p) {
            r.perfect ? "   Perfect!" : "");
     printf("  เติบโต %.1f/30 | สมดุล %.1f/40 | สุขภาพ %.1f/30\n",
            r.growth,r.balance,r.weatherScore);
+    if (r.health==100 && challenge_met(p->value,day->weather))
+        printf("  ผ่านโจทย์คืนนี้! ต้นไม้พร้อมรับมือ%s\n",weather[day->weather]);
     visitor_returns(day,p);
     heading("ป้าอิงฝากไว้");
     printf("  “%s”\n",ending(p,r,day->weather));
