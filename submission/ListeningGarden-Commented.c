@@ -522,6 +522,31 @@ void guide(const Day *day) {
     printf("%s\n", forecast[day->weather]);
 }
 
+int solve_trade(Day *trial) {
+    int need[3];
+    int mixes=0;
+    for (int g=0;g<3;g++) {
+        need[g]=larger(0,challenge[trial->weather][g]/10
+                         -trial->stock[g*2]-trial->stock[g*2+1]);
+        mixes+=need[g];
+    }
+    if (mixes>STOCK-9) return 0;
+    Plan p={0};
+    for (int i=0;i<TYPES;i++) p.bag[i]=trial->stock[i];
+    for (int g=0;g<3;g++)
+        for (int i=0;i<need[g];i++) {
+            int a=remaining(&p,(g+1)%3), b=remaining(&p,(g+2)%3);
+            if (a<0 || b<0 || !apply(&p,make_move(a,b))) return 0;
+        }
+    for (int g=0;g<3;g++)
+        while (p.value[g]<challenge[trial->weather][g]) {
+            int a=remaining(&p,g);
+            if (a<0 || !apply(&p,make_move(a,-1))) return 0;
+        }
+    trial->answer=p;
+    return evaluate(p.value,trial->weather).perfect;
+}
+
 void meet_customers(Day *day, Plan *plan, int brief) {
     const char *summary[]={
         "ลูกค้าเก่าพาลูกมาซื้อขนม นิดดีใจที่เขายังจำร้านได้",
@@ -559,13 +584,21 @@ void meet_customers(Day *day, Plan *plan, int brief) {
             printf("“%s”\n\n",s->story);
 
             printf("  [1] %s\n  [2] %s\n  [3] %s\n",s->question,s->otherQuestion,help[day->guest[i]]);
+            Day trial=*day;
+            int offer=0;
             if (i==VISITS-1) {
-                printf("  เก็บผลึกเดิมไว้ จะมีสูตรออกดอกแน่นอน\n");
-                printf("  [4] คุยต่อ และขอแลกผลึก %s 1 ชิ้น เป็น %s\n",
-                       crystal[gift],crystal[alternate]);
+                trial.stock[gift]--;
+                trial.stock[alternate]++;
+                offer=solve_trade(&trial);
+                if (offer)
+                    printf("  [4] คุยต่อและแลก %s 1 ชิ้น เป็น %s (ยังออกดอกได้)\n",
+                           crystal[gift],crystal[alternate]);
             }
-            int answer=choose(1,i==VISITS-1 ? 4 : 3);
-            if (answer==4) day->changed_gift=1;
+            int answer=choose(1,offer ? 4 : 3);
+            if (answer==4) {
+                *day=trial;
+                day->changed_gift=1;
+            }
             if (inputEnded) return;
             heading("บทสนทนาต่อ");
             if (answer>=3) {
@@ -683,7 +716,7 @@ void welcome(void) {
             if (recipe(a,b)) describe(make_move(a,b));
         }
     }
-    printf("\n1. เริ่มเนื้อเรื่อง\n");
+    printf("\n  [1] เริ่มเนื้อเรื่อง\n");
     if (!choose(1,1)) return;
 }
 
@@ -765,8 +798,8 @@ int mix_fertilizer(Plan *plan) {
         if (!second) return 0;
         Move move={options[first-1],options[second-1]};
         if (move.a/2==move.b/2) {
-            printf("ผลึกสองชิ้นนี้อยู่กลุ่มเดียวกัน จึงผสมกันไม่ได้\n");
-            return 0;
+            printf("ผลึกสองชิ้นนี้อยู่กลุ่มเดียวกัน ลองเลือกใหม่ได้\n");
+            continue;
         }
         describe(move);
         int limit=smaller(plan->bag[move.a],plan->bag[move.b]);
@@ -797,6 +830,14 @@ void planting(const Day *day, Plan *plan) {
                    preview.health==100 && challenge_met(plan->value,day->weather)
                    ? "ได้" : "ยังไม่ได้");
         }
+        Result conditions=evaluate(plan->value,day->weather);
+        for (int i=0;i<3;i++) {
+            if (plan->value[i]<10)
+                printf("  ให้รอด: เติม%sอีก %d ให้ถึง 10\n",part[i],10-plan->value[i]);
+            if (conditions.missing[i])
+                printf("  ให้สุขภาพเต็ม: เติม%sอีก %d จากแผนตอนนี้\n",
+                       part[i],conditions.missing[i]);
+        }
         printf("  คลังผลึก\n");
         for (int i=0;i<TYPES;i++)
             printf("    %s %d%s",crystal[i],plan->bag[i],i%2 ? "\n" : " / ");
@@ -814,8 +855,11 @@ void planting(const Day *day, Plan *plan) {
                        plan->value[0],plan->value[1],plan->value[2]);
             }
         } else if (action==4) {
-            int previous=plan->count;
-            if (mix_fertilizer(plan)) before[actions++]=previous;
+            while (!inputEnded) {
+                int previous=plan->count;
+                if (!mix_fertilizer(plan)) break;
+                before[actions++]=previous;
+            }
         } else if (action==2) {
             printf("\nต้นไม้ตามแผนตอนนี้\n");
             show_tree(plan,NULL);
@@ -902,7 +946,8 @@ void visitor_returns(const Day *day, const Plan *p) {
         int id=day->guest[i];
         if (i==VISITS-1 && day->changed_gift &&
             (stories[id].type+2)%TYPES==type && used==0) {
-            printf("\n%s แวะมาอีกครั้ง\n",stories[id].name);
+            heading("ลูกค้าแวะมาอีกครั้ง");
+            printf("  %s เล่าว่า\n",stories[id].name);
             printf("“%s”\n",stories[id].nextMorning);
             printf("ผลึก%sที่แลกกันเมื่อวานถูกใช้กับต้นนี้ด้วย\n",crystal[type]);
             break;
@@ -984,10 +1029,9 @@ int main(void) {
         if (inputEnded) return 0;
         morning(&day,&plan);
         if (inputEnded) return 0;
-        printf("1. ดูสูตร Perfect จากชุดผลึกเดิม   2. เล่นรอบใหม่   3. ออกจากเกม\n");
+        printf("1. ดูสูตร Perfect ของคืนนี้   2. เล่นรอบใหม่   3. ออกจากเกม\n");
         int action=choose(1,3);
         if (action==1) {
-            if (day.changed_gift) printf("สูตรนี้ใช้ชุดเดิมก่อนแลกผลึก\n");
             printf("เริ่มจากคลังก่อนใส่ปุ๋ย แล้วทำตามนี้ทีละบรรทัด\n");
             for (int i=0;i<day.answer.count;i++) describe(day.answer.moves[i]);
             printf("2. เล่นรอบใหม่   3. ออกจากเกม\n");

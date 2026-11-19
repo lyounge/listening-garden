@@ -8,12 +8,25 @@
 
 int main(void) {
     int coverage[3][3]={0};
+    int offered=0, blocked=0;
     for (int sample=0; sample<10000; sample++) {
         Day d;
         Plan player={0};
         int visited[12]={0}, mixes=0, groups[3]={0};
         new_day(&d);
         coverage[d.kind][d.weather]++;
+        Day trade=d;
+        int gift=stories[d.guest[VISITS-1]].type;
+        trade.stock[gift]--;
+        trade.stock[(gift+2)%TYPES]++;
+        if (solve_trade(&trade)) {
+            offered++;
+            Plan check={0};
+            memcpy(check.bag,trade.stock,sizeof check.bag);
+            for (int i=0;i<trade.answer.count;i++)
+                assert(apply(&check,trade.answer.moves[i]));
+            assert(evaluate(check.value,d.weather).perfect);
+        } else blocked++;
         for (int i=0;i<VISITS;i++) {
             int id=d.guest[i];
             assert(!visited[id] && d.gift[i]>0);
@@ -61,6 +74,7 @@ int main(void) {
         int small[]={10,30,30};
         assert(evaluate(small,w).health==100);
     }
+    assert(offered>0 && blocked>0);
     int tree[]={50,30,20};
     assert(evaluate(tree,0).health==50);
     assert(evaluate(tree,1).health==60);

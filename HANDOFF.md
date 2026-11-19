@@ -43,3 +43,4 @@ Dialogue continuity pass: edited all three copies, rebuilt EXE, checked all 36 c
 Added optional weather challenges and live planting previews. Existing score and Perfect unchanged; the optional challenge may not be reachable with every inventory. Gameplay suite passed.
 Weather-specific flowering targets and optional last-customer crystal exchange. Original inventory guaranteed Perfect; optional exchange can change feasibility. Strict builds, 10000-day tests, full gameplay and exchange smoke passed.
 Added inventory-filtered recipe lookup and batch mixing with batch undo, streamlined planting targets, and restored gift attribution after trade. Collection deferred. Gameplay suite passed.
+Trade offered only if revised Perfect solution works; mixing stays open; survival and health deficits shown. Build, menu tests and 10000 trade/normal inventories checked.

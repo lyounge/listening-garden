@@ -52,19 +52,24 @@ try:
     bag = [int(re.search(r"(?<!\S)" + n + r" (\d+)", screen).group(1)) for n in names]
     goals = list(map(int, re.search(r"เป้าออกดอกคืนนี้: ใบ (\d+) / ราก (\d+) / เปลือก (\d+)", screen).groups()))
     values = [0, 0, 0]
+    mixing = False
     for group in range(3):
         while sum(bag[group*2:group*2+2]) + values[group]//10 < goals[group]//10:
             picks = [next(i for i in range(g*2, g*2+2) if bag[i])
                      for g in range(3) if g != group]
-            screen = send(4)
+            if not mixing:
+                screen = send(4)
+                mixing = True
             options = dict((name, num) for num, name in re.findall(
                 r"(\d+)\. (สุข|ภูมิใจ|เศร้า|กลัว|โกรธ|ผิดหวัง) ×", screen))
             send(options[names[picks[0]]])
             send(options[names[picks[1]]])
-            send(1)
+            screen = send(1)
             for i in picks:
                 bag[i] -= 1
             values[group] += 10
+    if mixing:
+        send(0)
     send(1)
     for group in range(3):
         while values[group] < goals[group]:
