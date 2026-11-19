@@ -38,3 +38,4 @@ No graphics library or new headers. Known scope: terminal Thai font shaping rema
 ## 2026-11-20 Final release hardening
 Fixed reproduced long-line spill and integer overflow in choose (bounded two-digit scan, drain incomplete lines). Added wait_enter to consume complete pause lines. Full dialogue pauses after gifts; fixed line breaks in long story strings avoid runtime Unicode helpers. Added CODE-GUIDE.md for explaining every subsystem and presentation sequence.
 tests/play_game.py permanently checks malformed/overflow/truncated input, full/brief rounds, every guide exit, no-fertilizer ending and inventory-planned Perfect. CI now runs these alongside 10000-day C rules. No new game headers.
+2026-11-20: Role-based dialogue polish focused on question-answer continuity and natural speech. Updated all three C copies and rebuilt Windows EXE. Strict C11 builds and gameplay suite passed on each copy.
