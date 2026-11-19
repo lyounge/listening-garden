@@ -48,6 +48,18 @@ int main(void) {
             assert(!apply(&p,m) && p.value[target(m)]==10);
         }
     }
+    for (int w=0;w<3;w++) {
+        for (int missing=0;missing<3;missing++) {
+            int incomplete[]={30,30,30};
+            incomplete[missing]=0;
+            assert(evaluate(incomplete,w).health==0);
+            assert(!evaluate(incomplete,w).perfect);
+        }
+        int balanced[]={30,30,30};
+        assert(evaluate(balanced,w).perfect);
+        int small[]={10,30,30};
+        assert(evaluate(small,w).health==100);
+    }
     int tree[]={50,30,20};
     assert(evaluate(tree,0).health==50);
     assert(evaluate(tree,1).health==60);

@@ -25,3 +25,7 @@ User correction: restored original title tree, split help into morning/evening a
 ## 2026-11-20 Clear instructions and results
 Removed redundant Aunt Ing subtitle under start. Help explains mixing shortages/cost/example, survival versus optional Perfect flowers, all weather requirements and health damage. Forecasts now describe threats and requirements on separate lines. Dialogue continuation and crystal rewards separated clearly. Ending now shows result, actual values and deficits before a shorter Aunt reflection; returning customer has their own heading.
 Gameplay and choice sequence unchanged. Strict C11 builds, 10000-day tests, all three conversation paths through full rounds (including help and result labels) passed. Rebuilt shipped EXE.
+
+## 2026-11-20 Playtest improvements
+Completed six requested changes: paged skippable help, weather-specific safe targets plus inventory on planting table, individual third dialogue choices, skip identical growth frames, minimum 10 in all three parts to survive, and deficit-specific ending reflections. Mixing stays in its separate menu; title tree unchanged.
+Validation: strict C11 builds; 10000-day rules and new missing-part survival regressions across all weather; direct/all four help skips/full guide complete rounds; four representative growth plans had no repeated adjacent frames. Rebuilt EXE. README describes survival versus safe targets and Perfect.
