@@ -1,4 +1,7 @@
-# Grow a (Feeling) Garden
+#
+- [Full edition source and guides](submission/)
+- [Mini edition source and guide](mini/)
+ Grow a (Feeling) Garden
 
 ดับเบิลคลิก **share/GardenClass.exe** บน Windows พิมพ์เลขเมนูแล้วกด Enter เลือก 1 เพื่อเริ่มเรื่องทันที หรือเลือก 2 เพื่ออ่านวิธีเล่นและสูตรผสมทั้ง 12 สูตรก่อนเปิดร้าน
 
