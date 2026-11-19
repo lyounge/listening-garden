@@ -19,7 +19,7 @@ int main(void) {
         int gift=stories[d.guest[VISITS-1]].type;
         trade.stock[gift]--;
         trade.stock[(gift+2)%TYPES]++;
-        if (solve_trade(&trade)) {
+        if (find_answer(&trade)) {
             offered++;
             Plan check={0};
             memcpy(check.bag,trade.stock,sizeof check.bag);

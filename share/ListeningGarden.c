@@ -235,25 +235,31 @@ int remaining(const Plan *p,int group) {
  if(p->bag[first+1]>0) return first+1;
  return -1;
 }
-int find_answer(Day *d, int scarce, int mixes) {
- Plan p={0};
- for (int i=0; i<TYPES; i++) p.bag[i]=d->stock[i];
- /* ผสมให้ส่วนที่ขาดก่อน แล้วเติมผลึกตรงกลุ่มให้ครบด้านละ 30 */
- for (int i=0; i<mixes; i++) {
-    int a=remaining(&p,(scarce+1)%3), b=remaining(&p,(scarce+2)%3);
-    if (a<0 || b<0 || !apply(&p,make_move(a,b))) return 0;
- }
- for (int g=0; g<3; g++) {
-    while (p.value[g]<challenge[d->weather][g]) {
-        int a=remaining(&p,g);
-        if (a<0 || !apply(&p,make_move(a,-1))) return 0;
+int find_answer(Day *day) {
+    int need[3];
+    int mixes=0;
+    for (int g=0;g<3;g++) {
+        need[g]=larger(0,challenge[day->weather][g]/10
+                         -day->stock[g*2]-day->stock[g*2+1]);
+        mixes+=need[g];
     }
- }
- d->answer=p;
- return evaluate(p.value,d->weather).perfect;
+    if (mixes>STOCK-9) return 0;
+    Plan p={0};
+    for (int i=0;i<TYPES;i++) p.bag[i]=day->stock[i];
+    for (int g=0;g<3;g++)
+        for (int i=0;i<need[g];i++) {
+            int a=remaining(&p,(g+1)%3), b=remaining(&p,(g+2)%3);
+            if (a<0 || b<0 || !apply(&p,make_move(a,b))) return 0;
+        }
+    for (int g=0;g<3;g++)
+        while (p.value[g]<challenge[day->weather][g]) {
+            int a=remaining(&p,g);
+            if (a<0 || !apply(&p,make_move(a,-1))) return 0;
+        }
+    day->answer=p;
+    return evaluate(p.value,day->weather).perfect;
 }
 
-/* ตัวอย่าง draw(3) ให้ผลเป็น 0, 1 หรือ 2 */
 int draw(int count) {
     return rand() % count;
 }
@@ -317,7 +323,7 @@ void new_day(Day *d) {
             }
         }
         for (int i=0; i<VISITS; i++) d->stock[stories[ids[i]].type]+=d->gift[i];
-        if (find_answer(d,scarce,mixes)) return;
+        if (find_answer(d)) return;
     }
 }
 
@@ -520,31 +526,6 @@ void guide(const Day *day) {
     printf("%s\n", forecast[day->weather]);
 }
 
-int solve_trade(Day *trial) {
-    int need[3];
-    int mixes=0;
-    for (int g=0;g<3;g++) {
-        need[g]=larger(0,challenge[trial->weather][g]/10
-                         -trial->stock[g*2]-trial->stock[g*2+1]);
-        mixes+=need[g];
-    }
-    if (mixes>STOCK-9) return 0;
-    Plan p={0};
-    for (int i=0;i<TYPES;i++) p.bag[i]=trial->stock[i];
-    for (int g=0;g<3;g++)
-        for (int i=0;i<need[g];i++) {
-            int a=remaining(&p,(g+1)%3), b=remaining(&p,(g+2)%3);
-            if (a<0 || b<0 || !apply(&p,make_move(a,b))) return 0;
-        }
-    for (int g=0;g<3;g++)
-        while (p.value[g]<challenge[trial->weather][g]) {
-            int a=remaining(&p,g);
-            if (a<0 || !apply(&p,make_move(a,-1))) return 0;
-        }
-    trial->answer=p;
-    return evaluate(p.value,trial->weather).perfect;
-}
-
 void meet_customers(Day *day, Plan *plan) {
     const char *help[]={
         "เล่าต่อสิ ฟังอยู่", "ยังมีเรื่องอะไรอีกไหม ดูท่าจะยังเล่าไม่หมด",
@@ -570,7 +551,7 @@ void meet_customers(Day *day, Plan *plan) {
         if (i==VISITS-1) {
             trial.stock[gift]--;
             trial.stock[alternate]++;
-            offer=solve_trade(&trial);
+            offer=find_answer(&trial);
             if (offer)
                 printf("  [4] คุยต่อและแลก %s 1 ชิ้น เป็น %s (ยังออกดอกได้)\n",
                        crystal[gift],crystal[alternate]);
