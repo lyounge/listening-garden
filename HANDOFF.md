@@ -29,3 +29,8 @@ Gameplay and choice sequence unchanged. Strict C11 builds, 10000-day tests, all 
 ## 2026-11-20 Playtest improvements
 Completed six requested changes: paged skippable help, weather-specific safe targets plus inventory on planting table, individual third dialogue choices, skip identical growth frames, minimum 10 in all three parts to survive, and deficit-specific ending reflections. Mixing stays in its separate menu; title tree unchanged.
 Validation: strict C11 builds; 10000-day rules and new missing-part survival regressions across all weather; direct/all four help skips/full guide complete rounds; four representative growth plans had no repeated adjacent frames. Rebuilt EXE. README describes survival versus safe targets and Perfect.
+
+## 2026-11-20 Presentation readiness pass
+Two iteration review/playtest loop with independent reviewer. Added full/brief dialogue selection at shop opening, same gifts; continuous feeding with per-selection undo; score and result before returning visitor, Aunt closes story. Dead trees use existing bare-branch image; title tree unchanged. Removed unused proportions function.
+Validation: strict C11 builds, 10000-day rules; EXE full and brief rounds to Perfect without in-game answer, consecutive feeds + single undo + reset, malformed input/EOF, deterministic full/brief gift equivalence. Independent final review found no blocking logic defect. Updated CI smoke sequence. Final binary rebuilt after removing unused function.
+No graphics library or new headers. Known scope: terminal Thai font shaping remains device-dependent; 30/30/30 is intentionally universal Perfect target; no external human usability study performed.

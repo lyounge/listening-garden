@@ -379,6 +379,7 @@ void draw_frame(const Plan *p, int frame, const Result *morning) {
     if (frame>=3) image=4;            /* มีใบ */
     if (frame>=4 && p->value[0]>=30) image=5;
     if (frame>=2 && p->value[0]==0) image=3;
+    if (morning && morning->health==0 && p->count>0) image=3;
     int leaning=morning && morning->missing[1]>0 && p->value[0]>p->value[1];
     for (int row=0; row<8; row++) {
         /* กิ่งเอนออกจากโคนมากขึ้น ยิ่งอยู่ใกล้ยอด */
@@ -491,7 +492,21 @@ void guide(const Day *day) {
     printf("%s\n", forecast[day->weather]);
 }
 
-void meet_customers(const Day *day, Plan *plan) {
+void meet_customers(const Day *day, Plan *plan, int brief) {
+    const char *summary[]={
+        "ลูกค้าเก่าพาลูกมาซื้อขนม นิดดีใจที่เขายังจำร้านได้",
+        "เมฆขายโต๊ะตัวแรกได้ และกำลังคุยวันส่งงานชิ้นต่อไป",
+        "อุ่นหาบ้านผู้รับจดหมายเจอแล้ว หลังตามหาอยู่นาน",
+        "ฝนว่ายถึงอีกฝั่งได้เป็นครั้งแรก อยากเล่าให้ใครสักคนฟัง",
+        "ยายมะลิยังเผลอจัดดอกไม้เผื่อตาที่จากไป",
+        "ป่านกังวลกับการสอนครั้งแรก จึงอยากลองซ้อมพูด",
+        "ต้นไม้ที่กล้าเล่นใต้ร่มมาตั้งแต่เด็กโค่นลงแล้ว",
+        "ไหมจะเดินทางคนเดียวครั้งแรก อยากมีเพื่อนนั่งรอรถ",
+        "เต้โกรธที่งานป้ายถูกทาทับโดยไม่มีใครบอกก่อน",
+        "ดาวเสียใจที่ไมค์ดับระหว่างเพลงที่ตั้งใจซ้อม",
+        "อิฐถูกกล่าวหาว่าทำจานแตก ทั้งที่เพิ่งเข้าครัว",
+        "หลิวผิดหวังที่เมล็ดไม่งอก และยังไม่พร้อมเริ่มใหม่"
+    };
     const char *help[]={
         "เล่าต่อสิ ฟังอยู่", "เล่าเรื่องลูกค้าคนนี้ให้ฟังอีกหน่อย",
         "พักดื่มน้ำก่อน ค่อยเล่าก็ได้", "เล่าตั้งแต่ตอนลงสระเลยก็ได้",
@@ -505,6 +520,9 @@ void meet_customers(const Day *day, Plan *plan) {
         const Story *s=&stories[day->guest[i]];
         heading(s->name);
         printf("  %02d:00  |  ลูกค้าคนที่ %d / %d\n\n",9+i,i+1,VISITS);
+        if (brief) {
+            printf("  %s\n",summary[day->guest[i]]);
+        } else {
         printf("“%s”\n\n",s->story);
 
         printf("  [1] %s\n  [2] %s\n  [3] %s\n",s->question,s->otherQuestion,help[day->guest[i]]);
@@ -517,20 +535,13 @@ void meet_customers(const Day *day, Plan *plan) {
         }
         if (answer==2) printf("%s\n", s->otherReply);
         else printf("%s\n", s->reply);
+        }
         plan->bag[s->type]+=day->gift[i];
         printf("\n  +--------------------------------------------------+\n");
         printf("    ได้รับผลึก: %s  +%d ชิ้น\n",crystal[s->type],day->gift[i]);
         printf("    ในคลังตอนนี้: %s  %d ชิ้น\n",crystal[s->type],plan->bag[s->type]);
         printf("  +--------------------------------------------------+\n");
     }
-}
-
-void proportions(const Plan *p) {
-    int total=p->value[0]+p->value[1]+p->value[2];
-    if (total==0) { printf("ยังไม่ได้ใส่ปุ๋ย\n"); return; }
-    for (int i=0; i<3; i++)
-        printf("%s %d (%.1f%%)   ",part[i],p->value[i],100.0*p->value[i]/total);
-    printf("\n");
 }
 
 void describe(Move move) {
@@ -720,8 +731,13 @@ void planting(const Day *day, Plan *plan) {
         int action=choose(1,4);
         if (inputEnded) return;
         if (action==1) {
-            int previous=plan->count;
-            if (feed(plan)) before[actions++]=previous;
+            while (!inputEnded) {
+                int previous=plan->count;
+                if (!feed(plan)) break;
+                before[actions++]=previous;
+                printf("  ตอนนี้ ใบ %d / ราก %d / เปลือก %d\n",
+                       plan->value[0],plan->value[1],plan->value[2]);
+            }
         } else if (action==4) {
             int previous=plan->count;
             if (mix_fertilizer(plan)) before[actions++]=previous;
@@ -732,7 +748,7 @@ void planting(const Day *day, Plan *plan) {
                 int value=plan->value[i];
                 printf("%s %d หน่วย · ",part[i],value);
                 if (value<30) printf("อีก %d หน่วยถึงเป้าหมายออกดอก\n",30-value);
-                else printf("ถึงเป้าหมายออกดอกแล้ว\n");
+                else printf("ถึง 30 แล้ว (ออกดอกต้องเท่ากันทั้งสามส่วน)\n");
             }
             printf("ผลึกที่เหลือ\n");
             for (int i=0; i<TYPES; i++)
@@ -845,18 +861,15 @@ void morning(const Day *day,const Plan *p) {
         if (!r.perfect && r.health==100)
             printf("  ยังไม่ออกดอก เพราะทั้งสามส่วนต้องเท่ากันและอย่างน้อย 30\n");
     }
+    printf("\n  คะแนนรวม %.0f/100%s\n",r.growth+r.balance+r.weatherScore,
+           r.perfect ? "   Perfect!" : "");
+    printf("  เติบโต %.1f/30 | สมดุล %.1f/40 | สุขภาพ %.1f/30\n",
+           r.growth,r.balance,r.weatherScore);
+    visitor_returns(day,p);
     heading("ป้าอิงฝากไว้");
     printf("  “%s”\n",ending(p,r,day->weather));
-    visitor_returns(day,p);
     printf("\n  ----------------------------------------------------\n");
-    printf("  [1] ดูคะแนนและบันทึกการปลูก\n");
-    if (!choose(1,1)) return;
-    printf("สัดส่วนปุ๋ยที่ใส่ทั้งหมด\n");
-    proportions(p);
-    printf("อากาศเมื่อคืน: %s   ขาดราก %d หน่วย / เปลือก %d หน่วย   สุขภาพ %d/100\n",
-           weather[day->weather],r.missing[1],r.missing[2],r.health);
-    printf("เติบโต %.1f/30   สมดุล %.1f/40   หลังผ่านอากาศ %.1f/30\n",r.growth,r.balance,r.weatherScore);
-    printf("คะแนนรวม %.0f/100%s\n",r.growth+r.balance+r.weatherScore,r.perfect?"   Perfect!":"");
+
 }
 
 int main(void) {
@@ -875,9 +888,10 @@ int main(void) {
         printf("“ฝากเมล็ดไว้สักคืนนะ วันนี้ใครแวะมาก็ลองฟังเขาดู พอตกเย็นค่อยเอาผลึกที่เขาฝากไว้มาปลูกกัน”\n");
         printf("ป้าอิงวางสมุดดูแลเมล็ดไว้ข้างห่อกระดาษ แล้วชี้ให้ดูพยากรณ์คืนนี้\n");
         printf("%s\n", forecast[day.weather]);
-        printf("1. เปิดประตูรับลูกค้า\n");
-        if (!choose(1,1)) return 0;
-        meet_customers(&day,&plan);
+        printf("[1] เปิดร้าน อ่านบทเต็ม\n[2] เปิดร้าน อ่านแบบย่อ (ผลึกเท่าเดิม)\n");
+        int mode=choose(1,2);
+        if (inputEnded) return 0;
+        meet_customers(&day,&plan,mode==2);
         if (inputEnded) return 0;
         planting(&day,&plan);
         if (inputEnded) return 0;
