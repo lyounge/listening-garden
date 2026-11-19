@@ -14,7 +14,7 @@ jobs:
       - name: Compile game and check rules
         run: |
           set -eu
-          gcc -std=c11 -Wall -Wextra -Werror -pedantic share/ListeningGarden.c -o /tmp/garden-class
+          gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Main/share/ListeningGarden.c -o /tmp/garden-class
           gcc -std=c11 -Wall -Wextra -Werror -pedantic tests/test_garden.c -o /tmp/check-rules
           /tmp/check-rules
           python3 tests/play_game.py /tmp/garden-class

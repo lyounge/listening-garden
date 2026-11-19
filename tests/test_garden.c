@@ -1,5 +1,5 @@
 #define main garden_main
-#include "../share/ListeningGarden.c"
+#include "../GrowGarden/Main/share/ListeningGarden.c"
 #undef main
 #include <stdbool.h>
 #include <assert.h>

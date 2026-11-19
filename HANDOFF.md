@@ -1,10 +1,10 @@
 # Listening Garden handoff
 Updated 2026-11-13.
-- Only game source: share/ListeningGarden.c. Keep beginner-friendly C11 and UTF-8.
-- Playable Windows build: share/GardenClass.exe. Rebuild when changing game behavior.
+- Main game source: GrowGarden/Main/share/ListeningGarden.c. Keep beginner-friendly C11 and UTF-8.
+- Playable Windows build: GrowGarden/Main/share/GardenClass.exe. Rebuild when changing game behavior.
 - Removed obsolete root multi-file game and its EXE. Old versions remain in Git history and backup ZIPs.
 - tests/test_garden.c includes the single-file game with main renamed for rule tests. It is development tooling, not needed to distribute the game.
-- Build: gcc -std=c11 -Wall -Wextra -Werror -pedantic share/ListeningGarden.c -o GardenClass.exe
+- Build: gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Main/share/ListeningGarden.c -o GardenClass.exe
 - Test: gcc -std=c11 -Wall -Wextra -Werror -pedantic tests/test_garden.c -o test_garden.exe
 - Verified locally: both strict builds, 10000 randomized days including recipes/scoring/undo, full console round to score.
 - GitHub workflow checks the same source and tests. Keep main protected, submit PRs.
@@ -13,7 +13,7 @@ Updated 2026-11-13.
 
 ## 2026-11-19 Dialogue revision
 Rewrote all 12 customer records, including both question paths, help requests/actions, and morning callbacks. Voice: concrete everyday speech, distinct reactions, no instant resolution required. Used kien-thai; native-model route unavailable, drafted and audited directly.
-Only story data changed; game logic is byte-for-byte unchanged after normalizing the story block. Strict C11 game/test builds and 10000-day tests passed. Three complete console rounds covering dialogue options 1/2/3 passed with eight crystal gifts each. Rebuilt share/GardenClass.exe.
+Only story data changed; game logic is byte-for-byte unchanged after normalizing the story block. Strict C11 game/test builds and 10000-day tests passed. Three complete console rounds covering dialogue options 1/2/3 passed with eight crystal gifts each. Rebuilt GrowGarden/Main/share/GardenClass.exe.
 Removed user-authorized untracked exercises test1-4 (.c/.exe), tesst5.c, EmployeeData.txt and LibraryBooks.txt from share. Backup before removal includes these files in LocalAppData/ListeningGarden/Backups/garden-20261119-164751-7434524-97f5edc.zip.
 
 ## 2026-11-19 Console presentation
@@ -49,4 +49,4 @@ Clarified planting hints, flowering deficits and score, added Aunt Ing scene tra
 Removed brief mode. Shop opens with full dialogue only. All three strict C11 builds and menu tests passed.
 Unified Perfect solver for day generation and trades; retained single-file game, art and dialogue. All three builds and gameplay suites plus 10000-day rules passed.
 Removed trades, guest morning callbacks and per-batch undo; retained full refund and scores. Updated guides and gameplay tests.
-Mini edition at mini/ListeningGarden-Mini.c is standalone (564 lines). Preserves story, ending and art data; simplified day generation and planting controls. Strict C11, complete empty round and 10000 solvable inventories verified.
+Mini edition at GrowGarden/Mini/ListeningGarden-Mini.c is standalone (564 lines). Preserves story, ending and art data; simplified day generation and planting controls. Strict C11, complete empty round and 10000 solvable inventories verified.
