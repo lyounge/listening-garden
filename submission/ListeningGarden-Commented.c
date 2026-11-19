@@ -547,21 +547,7 @@ int solve_trade(Day *trial) {
     return evaluate(p.value,trial->weather).perfect;
 }
 
-void meet_customers(Day *day, Plan *plan, int brief) {
-    const char *summary[]={
-        "ลูกค้าเก่าพาลูกมาซื้อขนม นิดดีใจที่เขายังจำร้านได้",
-        "เมฆขายโต๊ะตัวแรกได้ และกำลังคุยวันส่งงานชิ้นต่อไป",
-        "อุ่นหาบ้านผู้รับจดหมายเจอแล้ว หลังตามหาอยู่นาน",
-        "ฝนว่ายถึงอีกฝั่งได้เป็นครั้งแรก อยากเล่าให้ใครสักคนฟัง",
-        "ยายมะลิยังเผลอจัดดอกไม้เผื่อตาที่จากไป",
-        "ป่านกังวลกับการสอนครั้งแรก จึงอยากลองซ้อมพูด",
-        "ต้นไม้ที่กล้าเล่นใต้ร่มมาตั้งแต่เด็กโค่นลงแล้ว",
-        "ไหมจะเดินทางคนเดียวครั้งแรก อยากมีเพื่อนนั่งรอรถ",
-        "เต้โกรธที่งานป้ายถูกทาทับโดยไม่มีใครบอกก่อน",
-        "ดาวเสียใจที่ไมค์ดับระหว่างเพลงที่ตั้งใจซ้อม",
-        "อิฐถูกกล่าวหาว่าทำจานแตก ทั้งที่เพิ่งเข้าครัว",
-        "หลิวผิดหวังที่เมล็ดไม่งอก และยังไม่พร้อมเริ่มใหม่"
-    };
+void meet_customers(Day *day, Plan *plan) {
     const char *help[]={
         "เล่าต่อสิ ฟังอยู่", "ยังมีเรื่องอะไรอีกไหม ดูท่าจะยังเล่าไม่หมด",
         "พักดื่มน้ำก่อน ค่อยเล่าก็ได้", "ตอนแตะขอบสระแล้วเป็นยังไงบ้าง",
@@ -578,36 +564,32 @@ void meet_customers(Day *day, Plan *plan, int brief) {
         int gift=s->type;
         int picks=day->gift[i];
         int alternate=(gift+2)%TYPES;
-        if (brief) {
-            printf("  %s\n",summary[day->guest[i]]);
-        } else {
-            printf("“%s”\n\n",s->story);
+        printf("“%s”\n\n",s->story);
 
-            printf("  [1] %s\n  [2] %s\n  [3] %s\n",s->question,s->otherQuestion,help[day->guest[i]]);
-            Day trial=*day;
-            int offer=0;
-            if (i==VISITS-1) {
-                trial.stock[gift]--;
-                trial.stock[alternate]++;
-                offer=solve_trade(&trial);
-                if (offer)
-                    printf("  [4] คุยต่อและแลก %s 1 ชิ้น เป็น %s (ยังออกดอกได้)\n",
-                           crystal[gift],crystal[alternate]);
-            }
-            int answer=choose(1,offer ? 4 : 3);
-            if (answer==4) {
-                *day=trial;
-                day->changed_gift=1;
-            }
-            if (inputEnded) return;
-            heading("บทสนทนาต่อ");
-            if (answer>=3) {
-                printf("“%s”\n",s->clarify);
-                printf("%s\n", s->listenAction);
-            }
-            if (answer==2) printf("%s\n", s->otherReply);
-            else printf("%s\n", s->reply);
+        printf("  [1] %s\n  [2] %s\n  [3] %s\n",s->question,s->otherQuestion,help[day->guest[i]]);
+        Day trial=*day;
+        int offer=0;
+        if (i==VISITS-1) {
+            trial.stock[gift]--;
+            trial.stock[alternate]++;
+            offer=solve_trade(&trial);
+            if (offer)
+                printf("  [4] คุยต่อและแลก %s 1 ชิ้น เป็น %s (ยังออกดอกได้)\n",
+                       crystal[gift],crystal[alternate]);
         }
+        int answer=choose(1,offer ? 4 : 3);
+        if (answer==4) {
+            *day=trial;
+            day->changed_gift=1;
+        }
+        if (inputEnded) return;
+        heading("บทสนทนาต่อ");
+        if (answer>=3) {
+            printf("“%s”\n",s->clarify);
+            printf("%s\n", s->listenAction);
+        }
+        if (answer==2) printf("%s\n", s->otherReply);
+        else printf("%s\n", s->reply);
         if (i==VISITS-1 && day->changed_gift) {
             plan->bag[alternate]++;
             picks--;
@@ -618,12 +600,10 @@ void meet_customers(Day *day, Plan *plan, int brief) {
         if (picks) printf("    ได้รับผลึก: %s  +%d ชิ้น\n",crystal[gift],picks);
         printf("    ในคลังตอนนี้: %s  %d ชิ้น\n",crystal[s->type],plan->bag[s->type]);
         printf("  +--------------------------------------------------+\n");
-        if (!brief) {
-            printf(i+1<VISITS ? "  กด Enter เพื่อรับลูกค้าคนถัดไป\n"
-                              : "  กด Enter เพื่อไปโต๊ะปลูก\n");
-            wait_enter();
-            if (inputEnded) return;
-        }
+        printf(i+1<VISITS ? "  กด Enter เพื่อรับลูกค้าคนถัดไป\n"
+                          : "  กด Enter เพื่อไปโต๊ะปลูก\n");
+        wait_enter();
+        if (inputEnded) return;
     }
 }
 
@@ -1031,10 +1011,9 @@ int main(void) {
         printf("“ฝากเมล็ดไว้สักคืนนะ วันนี้ใครแวะมาก็ลองฟังเขาดู พอตกเย็นค่อยเอาผลึกที่เขาฝากไว้มาปลูกกัน”\n");
         printf("ป้าอิงวางสมุดดูแลเมล็ดไว้ข้างห่อกระดาษ แล้วชี้ให้ดูพยากรณ์คืนนี้\n");
         printf("%s\n", forecast[day.weather]);
-        printf("[1] เปิดร้าน อ่านบทเต็ม\n[2] เปิดร้าน อ่านแบบย่อ (ใช้ผลึกชุดเดิม ไม่แลก)\n");
-        int mode=choose(1,2);
-        if (inputEnded) return 0;
-        meet_customers(&day,&plan,mode==2);
+        printf("[1] \n");
+        if (!choose(1,1)) return 0;
+        meet_customers(&day,&plan);
         if (inputEnded) return 0;
         printf("\n  ป้าอิง: “ลูกค้ากลับกันหมดแล้ว เอาผลึกไปดูต้นไม้กันลูก”\n");
         planting(&day,&plan);

@@ -46,3 +46,4 @@ Added inventory-filtered recipe lookup and batch mixing with batch undo, streaml
 Trade offered only if revised Perfect solution works; mixing stays open; survival and health deficits shown. Build, menu tests and 10000 trade/normal inventories checked.
 Combined duplicate planting hints per part, kept mixing open after quantity cancel (EOF still exits), and aligned trade callback text. Strict build and gameplay checks passed. Day counter deferred.
 Clarified planting hints, flowering deficits and score, added Aunt Ing scene transitions and brief-mode label. Strict build and gameplay tests passed.
+Removed brief mode. Shop opens with full dialogue only. All three strict C11 builds and menu tests passed.

@@ -15,19 +15,17 @@ for bad in ("4294967297", "9" * 200, "1" + " " * 98 + "2", "abc", "-1", "1x"):
     text = run(bad + "\n")
     assert "08:00" not in text, bad
     assert "ได้รับผลึก:" not in text, bad
-    text = run(bad + "\n1\n2\n3\n1\n1\n3\n")
+    text = run(bad + "\n1\n1\n" + "3\n\n"*8 + "3\n1\n1\n3\n")
     assert "คะแนนรวม" in text
 
-# Full dialogue pauses, brief mode, and every help exit.
+# Full dialogue pauses, and every help exit.
 for prefix in ("1\n", "2\n0\n", "2\n1\n0\n",
                "2\n1\n1\n0\n", "2\n1\n1\n1\n0\n",
                "2\n1\n1\n1\n1\n1\n"):
-    for mode in (1, 2):
-        dialogue = "3\n\n" * 8 if mode == 1 else ""
-        text = run(prefix + str(mode) + "\n" + dialogue + "3\n1\n1\n3\n")
-        assert text.count("ได้รับผลึก:") == 8
-        assert "คะแนนรวม 0/100" in text
-        assert "ยังไม่ได้ใส่ปุ๋ย" in text
+    text = run(prefix + "1\n" + "3\n\n"*8 + "3\n1\n1\n3\n")
+    assert text.count("ได้รับผลึก:") == 8
+    assert "คะแนนรวม 0/100" in text
+    assert "ยังไม่ได้ใส่ปุ๋ย" in text
 
 # Plan from the displayed inventory, without using the game's answer.
 names = ["สุข", "ภูมิใจ", "เศร้า", "กลัว", "โกรธ", "ผิดหวัง"]
@@ -48,7 +46,11 @@ try:
         return read()
     read()
     send(1)
-    screen = send(2)
+    screen = send(1)
+    for _ in range(8):
+        p.stdin.write(b"3\n\n")
+        p.stdin.flush()
+        screen = read()
     bag = [int(re.search(r"(?<!\S)" + n + r" (\d+)", screen).group(1)) for n in names]
     goals = list(map(int, re.search(r"เป้าออกดอกคืนนี้: ใบ (\d+) / ราก (\d+) / เปลือก (\d+)", screen).groups()))
     values = [0, 0, 0]
@@ -93,4 +95,4 @@ finally:
     if p.poll() is None:
         p.kill()
     p.wait()
-print("PASS: input regressions, full/brief modes, help exits, empty ending and Perfect round")
+print("PASS: input regressions, full dialogue, help exits, empty ending and Perfect round")
