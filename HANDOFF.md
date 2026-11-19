@@ -44,3 +44,4 @@ Added optional weather challenges and live planting previews. Existing score and
 Weather-specific flowering targets and optional last-customer crystal exchange. Original inventory guaranteed Perfect; optional exchange can change feasibility. Strict builds, 10000-day tests, full gameplay and exchange smoke passed.
 Added inventory-filtered recipe lookup and batch mixing with batch undo, streamlined planting targets, and restored gift attribution after trade. Collection deferred. Gameplay suite passed.
 Trade offered only if revised Perfect solution works; mixing stays open; survival and health deficits shown. Build, menu tests and 10000 trade/normal inventories checked.
+Combined duplicate planting hints per part, kept mixing open after quantity cancel (EOF still exits), and aligned trade callback text. Strict build and gameplay checks passed. Day counter deferred.

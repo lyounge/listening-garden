@@ -803,7 +803,8 @@ int mix_fertilizer(Plan *plan) {
         int limit=smaller(plan->bag[move.a],plan->bag[move.b]);
         printf("ผสมกี่ชุด? 1–%d (0 ยกเลิก) ชุดละ 10 หน่วย\n",limit);
         int amount=choose(0,limit);
-        if (!amount) return 0;
+        if (inputEnded) return 0;
+        if (!amount) continue;
         for (int i=0;i<amount;i++) apply(plan,move);
         printf("ผสม %d ชุด เติม%s +%d\n",amount,part[target(move)],10*amount);
         return 1;
@@ -829,9 +830,13 @@ void planting(const Day *day, Plan *plan) {
         }
         Result conditions=evaluate(plan->value,day->weather);
         for (int i=0;i<3;i++) {
-            if (plan->value[i]<10)
-                printf("  ให้รอด: เติม%sอีก %d ให้ถึง 10\n",part[i],10-plan->value[i]);
-            if (conditions.missing[i])
+            int minimum=larger(0,10-plan->value[i]);
+            if (minimum && conditions.missing[i]>minimum)
+                printf("  %s: เติม %d ถึงขั้นต่ำ / เติม %d เพื่อสุขภาพเต็ม\n",
+                       part[i],minimum,conditions.missing[i]);
+            else if (minimum)
+                printf("  ให้รอด: เติม%sอีก %d ให้ถึง 10\n",part[i],minimum);
+            else if (conditions.missing[i])
                 printf("  ให้สุขภาพเต็ม: เติม%sอีก %d จากแผนตอนนี้\n",
                        part[i],conditions.missing[i]);
         }
@@ -945,8 +950,8 @@ void visitor_returns(const Day *day, const Plan *p) {
             (stories[id].type+2)%TYPES==type && used==0) {
             heading("ลูกค้าแวะมาอีกครั้ง");
             printf("  %s เล่าว่า\n",stories[id].name);
-            printf("“%s”\n",stories[id].nextMorning);
-            printf("ผลึก%sที่แลกกันเมื่อวานถูกใช้กับต้นนี้ด้วย\n",crystal[type]);
+            printf("  “%s”\n",stories[id].nextMorning);
+            printf("  ผลึก%sที่แลกกันเมื่อวานถูกใช้กับต้นนี้ด้วย\n",crystal[type]);
             break;
         }
         if (stories[id].type!=type) continue;
