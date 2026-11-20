@@ -54,3 +54,4 @@ Mini is the primary classroom project. Full edition retained for reference. Mini
 Mini startup now offers a short optional guide. Strict build, guide return/exit and full round after reading passed.
 Mini: 12 original console portraits, hidden running inventory in gift scene, and six direct fertilizer effect labels. Strict build and complete help-to-score run passed. Still under 600 lines.
 Refined all 12 Mini portraits to nine rows of console art each. Strict build and complete round passed; 596 source lines.
+Mini portraits now use distinct face shapes, eyes and accessories instead of a shared face. Strict build and full round passed; 596 lines.
