@@ -453,8 +453,12 @@ void planting(const Day *day, Plan *p) {
             printf("  คาดการณ์: %s | สุขภาพ %d/100 | ออกดอก %s\n",
                    r.health ? "รอด" : "ไม่รอด",r.health,r.perfect ? "ได้" : "ยังไม่ได้");
         }
-        printf("  [1] ใส่ปุ๋ย  [2] ผสมปุ๋ย  [3] คืนผลึกทั้งหมด  [4] ปลูกและปิดร้าน\n");
-        int action=choose(1,4);
+        printf("  [1] ใส่ปุ๋ย  [2] ผสมปุ๋ย  [3] คืนผลึกทั้งหมด  [4] ปลูกและปิดร้าน\n  [5] ดูสูตรผสมปุ๋ย\n");
+        int action=choose(1,5);
+        if (action==5) heading("สูตรผสมปุ๋ย (ยังไม่ใช้ผลึก)");
+        for (int a=0;action==5 && a<TYPES;a++)
+            for (int b=a+1;b<TYPES;b++) if (recipe(a,b))
+                printf("%s + %s = %s → %s +10\n",crystal[a],crystal[b],recipe(a,b),part[3-a/2-b/2]);
         if (action==1 || action==2) add_fertilizer(p,action==2);
         if (action==3) {
             *p=original;
