@@ -1,7 +1,11 @@
 #
-- [Full edition source and guides](GrowGarden/Main/submission/)
-- [Mini edition source and guide](GrowGarden/Mini/)
- Grow a (Feeling) Garden
+
+**ฉบับหลักสำหรับส่งงานและพัฒนาต่อ** — [Mini (โค้ด C ไฟล์เดียว 564 บรรทัด)](GrowGarden/Mini/)
+
+[ฉบับเต็มเดิมสำหรับอ้างอิง](GrowGarden/Main/)
+
+รายละเอียดด้านล่างอธิบายฉบับเต็มเดิม สำหรับวิธีเล่นและอธิบายโค้ด Mini ให้เปิดคู่มือในโฟลเดอร์ Mini
+
 
 ดับเบิลคลิก **GrowGarden/Main/share/GardenClass.exe** บน Windows พิมพ์เลขเมนูแล้วกด Enter เลือก 1 เพื่อเริ่มเรื่องทันที หรือเลือก 2 เพื่ออ่านวิธีเล่นและสูตรผสมทั้ง 12 สูตรก่อนเปิดร้าน
 
