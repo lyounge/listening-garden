@@ -339,6 +339,20 @@ int choose(int low, int high) {
         printf("เลือกเลข %d ถึง %d แล้วกด Enter\n", low, high);
     }
 }
+const char *faces[]={
+    "   ⢀⣠⣤⣤⣄⡀\n   ⣿⠉⠉⠉⢹⣿\n   ⢿ ⠂ ⠂ ⡿\n    ⠙⠦⠤⠴⠋\n   ⢀⡞⠶⠶⢳⡀\n",
+    "    ⣠⣴⣶⣤\n   ⣾⣿⠿⠿⠃\n   ⢸⠁⠂ ⠂⢹\n    ⠻⣄⠏⣠⠞\n   ⣠⡞⠿⠿⢳⣄\n",
+    "     ⣀⣴⣤⡀\n   ⠸⠿⠿⠿⠿⠛\n    ⢸⠂ ⠂⡇\n     ⠳⠤⠞\n   ⣠⡞⢦⡴⢳⣄\n",
+    "    ⢀⣤⣤⡀\n   ⢠⣿⣿⣿⣧\n   ⢸⠿⠶⠶⠿⡇\n    ⠱⣄⣀⠎\n   ⣠⠞⠉⠉⠳⣄\n",
+    "    ⢀⣀⣀⡀\n   ⣰⣿⣿⣿⣆\n   ⢸⣶⢒⢒⣶⡇\n    ⠙⣄⣠⠋\n   ⡴⢿⣷⣾⡿⢦\n",
+    "   ⢀⣤⣤⣤⡀\n   ⣿⠏ ⠙⢿⣇\n   ⣿⠶⡀⢀⠶⣿\n   ⠈⠳⣄⣠⠞⠁\n   ⣠⡴⠚⠓⢦⣄\n",
+    "    ⣠⣶⣶⣄\n   ⠿⠿⠿⠿⠿⠿\n    ⢸⠂ ⠂⡇\n    ⠈⠓⠒⠚\n    ⣰⣧⣤⣼⣆\n",
+    "   ⣀⣠⣤⣤⣀\n   ⣿⣿⠋⠙⣿\n   ⣿⢸⠂⠂⡇\n   ⠉⠈⠳⠚⠁\n   ⣠⣾⣄⣠⣷⣄\n",
+    "     ⣠⣤⣤\n   ⣴⣿⠿⠛⠁\n   ⢸ ⠂ ⠂⡇\n    ⠓⠦⠴⠊\n   ⣠⡴⢶⡶⢦⣄\n",
+    "  ✿ ⣠⣶⣶⣄\n   ⣿⠟ ⠻⣿\n   ⣿⡇⠂⠂⢸⣿\n   ⠙⠳⣄⣠⠞⠋\n    ⢀⡞⠿⢳⡀\n",
+    "    ⣤⣤⣤⣤\n   ⣾⠿⠛⠛⠿⣷\n    ⢸⠂ ⠂⡇\n     ⠓⠒⠚\n   ⣠⡞⢸⡇⢳⣄\n",
+    "    ⢀⣀⣀⡀\n   ⣰⣿⠟⢿⣆\n   ⣿⡇⠂⠂⢸⣿\n   ⠘⡇⠳⠞⢸⠃\n   ⣠⠞⢦⡴⠳⣄\n",
+};
 void meet_customers(const Day *day, Plan *plan) {
     const char *help[]={
         "เล่าต่อสิ ฟังอยู่", "ยังมีเรื่องอะไรอีกไหม ดูท่าจะยังเล่าไม่หมด",
@@ -351,6 +365,7 @@ void meet_customers(const Day *day, Plan *plan) {
     for (int i=0; i<VISITS; i++) {
         const Story *s=&stories[day->guest[i]];
         heading(s->name);
+        printf("%s",faces[day->guest[i]]);
         printf("  %02d:00  |  ลูกค้าคนที่ %d / %d\n\n",9+i,i+1,VISITS);
         int gift=s->type;
         int picks=day->gift[i];
@@ -368,7 +383,6 @@ void meet_customers(const Day *day, Plan *plan) {
         plan->bag[gift]+=picks;
         printf("\n  +--------------------------------------------------+\n");
         printf("    ได้รับผลึก: %s  +%d ชิ้น\n",crystal[gift],picks);
-        printf("    ในคลังตอนนี้: %s  %d ชิ้น\n",crystal[s->type],plan->bag[s->type]);
         printf("  +--------------------------------------------------+\n");
         printf(i+1<VISITS ? "  กด Enter เพื่อรับลูกค้าคนถัดไป\n"
                           : "  กด Enter เพื่อไปโต๊ะปลูก\n");
@@ -396,7 +410,7 @@ void show_aunt_ing(void) {
 }
 
 void inventory(const Plan *p) {
-    for (int i=0;i<TYPES;i++) printf("  [%d] %s (%d ชิ้น)\n",i+1,crystal[i],p->bag[i]);
+    for (int i=0;i<TYPES;i++) printf("  [%d] %s (%d ชิ้น) → %s +10 เมื่อใช้ตรง\n",i+1,crystal[i],p->bag[i],part[i/2]);
 }
 void add_fertilizer(Plan *p, int mixing) {
     inventory(p);
