@@ -51,3 +51,4 @@ Unified Perfect solver for day generation and trades; retained single-file game,
 Removed trades, guest morning callbacks and per-batch undo; retained full refund and scores. Updated guides and gameplay tests.
 Mini edition at GrowGarden/Mini/ListeningGarden-Mini.c is standalone (564 lines). Preserves story, ending and art data; simplified day generation and planting controls. Strict C11, complete empty round and 10000 solvable inventories verified.
 Mini is the primary classroom project. Full edition retained for reference. Mini C source stays at 564 lines; added Mini explanation and CI smoke check.
+Mini startup now offers a short optional guide. Strict build, guide return/exit and full round after reading passed.

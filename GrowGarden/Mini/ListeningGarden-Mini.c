@@ -525,6 +525,19 @@ void morning(const Day *day,const Plan *p) {
     printf("\n  ----------------------------------------------------\n");
 }
 
+void how_to_play(void) {
+    heading("วิธีเล่น");
+    printf("คุยกับลูกค้า 8 คน เลือกคำถามเพื่อรับผลึก\n");
+    printf("สุข/ภูมิใจ บำรุงใบ | เศร้า/กลัว บำรุงราก | โกรธ/ผิดหวัง บำรุงเปลือก\n");
+    printf("ใช้ตรง 1 ผลึก เพิ่ม 10 หน่วยให้กลุ่มของตัวเอง\n");
+    printf("ผสม 2 ผลึกต่างกลุ่ม เพิ่ม 10 หน่วยให้กลุ่มที่เหลือ\n");
+    printf("เช่น สุข + กลัว เพิ่มเปลือก 10 หน่วย\n");
+    printf("ดูพยากรณ์ก่อนปลูก ทุกส่วนต้องมีอย่างน้อย 10 และสุขภาพต้องเหลือจึงจะรอด\n");
+    printf("ให้ออกดอก: เติมครบตามเป้าบนโต๊ะปลูกและรักษาสุขภาพให้เต็ม\n");
+    printf("กด Enter กลับหน้าแรก\n");
+    wait_enter();
+}
+
 int main(void) {
 #ifdef _WIN32
     system("chcp 65001 >nul");
@@ -536,8 +549,13 @@ int main(void) {
     for (int g=0;g<3;g++) title.value[g]=30;
     show_tree(&title,NULL);
     printf("รับฟังเรื่องราว แล้วปลูกสวนจากความรู้สึก\n");
-    printf("[1] เริ่มเล่น (เปิดร้าน)  [0] ออกจากเกม\n");
-    if (!choose(0,1)) return 0;
+    while (!inputEnded) {
+        printf("[1] เริ่มเล่น (เปิดร้าน)  [2] วิธีเล่น  [0] ออกจากเกม\n");
+        int action=choose(0,2);
+        if (action==0) return 0;
+        if (action==1) break;
+        how_to_play();
+    }
     while (!inputEnded) {
         Day day={0};
         Plan plan={0};
