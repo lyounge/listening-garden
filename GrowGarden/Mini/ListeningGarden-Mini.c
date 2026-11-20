@@ -557,7 +557,7 @@ int main(void) {
     system("chcp 65001 >nul");
 #endif
     srand((unsigned)time(NULL));
-    heading("Grow a (Feeling) Garden — Mini");
+    heading("Grow a (Feeling) Garden");
     Plan title={0};
     title.count=1;
     for (int g=0;g<3;g++) title.value[g]=30;
