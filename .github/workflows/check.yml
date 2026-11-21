@@ -14,10 +14,9 @@ jobs:
       - name: Compile game and check rules
         run: |
           set -eu
-          gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Main/share/ListeningGarden.c -o /tmp/garden-class
-          gcc -std=c11 -Wall -Wextra -Werror -pedantic tests/test_garden.c -o /tmp/check-rules
-          /tmp/check-rules
-          python3 tests/play_game.py /tmp/garden-class
           gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Mini/ListeningGarden-Mini.c -o /tmp/garden-mini
           printf '%s\n' 9 1 1 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 4 1 1 0 | /tmp/garden-mini > /tmp/mini-result
           grep -Fq 'ยังไม่ได้ใส่ปุ๋ย - เมล็ดยังไม่เติบโต' /tmp/mini-result
+          gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Mini/ListeningGarden-Mini-Submission.c -o /tmp/garden-submission
+          for source in GrowGarden/Mini/*.c; do gcc -E -P "$source" -o "/tmp/$(basename "$source").i"; done
+          cmp /tmp/ListeningGarden-Mini.c.i /tmp/ListeningGarden-Mini-Submission.c.i

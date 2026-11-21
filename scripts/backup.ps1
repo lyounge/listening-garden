@@ -10,5 +10,5 @@ $archive = Join-Path $folder "garden-$stamp-$revision.zip"
 tar.exe -a -cf $archive --exclude=.git -C $project .
 if ($LASTEXITCODE) { throw "Backup failed: $archive" }
 $entries = tar.exe -tf $archive
-if ($LASTEXITCODE -or $entries -notcontains './GrowGarden/Main/share/ListeningGarden.c') { throw "Invalid backup: $archive" }
+if ($LASTEXITCODE -or $entries -notcontains './GrowGarden/Mini/ListeningGarden-Mini.c') { throw "Invalid backup: $archive" }
 Write-Output $archive
