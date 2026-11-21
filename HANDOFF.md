@@ -1,5 +1,14 @@
-# Listening Garden handoff
-Updated 2026-11-13.
+# Current project
+
+- Active game: GrowGarden/Mini/ListeningGarden-Mini.c.
+- Submission copy: GrowGarden/Mini/ListeningGarden-Mini-Submission.c.
+- Build: gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Mini/ListeningGarden-Mini.c -o GardenMini.exe
+- Run: .\GardenMini.exe
+- The Mini README links both source files and the current guides.
+- GitHub checks both copies for strict compilation and equivalent preprocessed source, and plays a Mini smoke round.
+- The former Main edition can be recovered from revision fb5b0e1. Earlier entries below describe historical work.
+
+2026-11-13.
 - Main game source: GrowGarden/Main/share/ListeningGarden.c. Keep beginner-friendly C11 and UTF-8.
 - Playable Windows build: GrowGarden/Main/share/GardenClass.exe. Rebuild when changing game behavior.
 - Removed obsolete root multi-file game and its EXE. Old versions remain in Git history and backup ZIPs.
