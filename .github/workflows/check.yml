@@ -20,4 +20,4 @@ jobs:
           python3 tests/play_game.py /tmp/garden-class
           gcc -std=c11 -Wall -Wextra -Werror -pedantic GrowGarden/Mini/ListeningGarden-Mini.c -o /tmp/garden-mini
           printf '%s\n' 9 1 1 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 3 '' 4 1 1 0 | /tmp/garden-mini > /tmp/mini-result
-          grep -Fq 'คะแนนรวม 0/100' /tmp/mini-result
+          grep -Fq 'ยังไม่ได้ใส่ปุ๋ย - เมล็ดยังไม่เติบโต' /tmp/mini-result

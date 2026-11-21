@@ -13,7 +13,6 @@ typedef struct {
     int guest[VISITS], gift[VISITS];
 } Day;
 typedef struct {
-    double growth, balance, weatherScore;
     int missing[3], health;
     int perfect;
 } Result;
@@ -140,25 +139,15 @@ int challenge_met(const int value[3], int weather_type) {
 }
 Result evaluate(const int v[3],int w) {
     Result r={0};
-    int low=v[0];
-    double progress=1.0;
-    for(int i=0;i<3;i++) {
-    low=smaller(low,v[i]);
-    r.growth+=smaller(v[i],challenge[w][i])*10.0/challenge[w][i];
-    double ratio=(double)v[i]/challenge[w][i];
-    if (ratio<progress) progress=ratio;
-    }
-     int rootGoal = 0, barkGoal = 0;
-     if (w == 0 || w == 1) rootGoal = larger(30, v[0]);
-     if (w == 0) barkGoal = larger(20, v[0] / 2);
-     if (w == 2) barkGoal = larger(30, v[0]);
-     r.missing[1] = larger(0, rootGoal - v[1]);
-     r.missing[2] = larger(0, barkGoal - v[2]);
-     r.health=larger(0,100-2*(r.missing[1]+r.missing[2]));
-     if (low<10) r.health=0;
-     r.weatherScore=.3*r.health;
-     r.perfect=challenge_met(v,w) && r.health==100;
-     r.balance=40*progress;
+    int rootGoal=0, barkGoal=0;
+    if (w==0 || w==1) rootGoal=larger(30,v[0]);
+    if (w==0) barkGoal=larger(20,v[0]/2);
+    if (w==2) barkGoal=larger(30,v[0]);
+    r.missing[1]=larger(0,rootGoal-v[1]);
+    r.missing[2]=larger(0,barkGoal-v[2]);
+    r.health=larger(0,100-2*(r.missing[1]+r.missing[2]));
+    if (v[0]<10 || v[1]<10 || v[2]<10) r.health=0;
+    r.perfect=challenge_met(v,w) && r.health==100;
     return r;
 }
 void new_day(Day *day) {
@@ -537,11 +526,6 @@ void morning(const Day *day,const Plan *p) {
             if (r.health<100) printf("    ต้องผ่านคืนนี้โดยไม่เสียสุขภาพด้วย\n");
         }
     }
-    printf("\n  คะแนนรวม %.0f/100%s\n",r.growth+r.balance+r.weatherScore,
-           r.perfect ? "   Perfect!" : "");
-    printf("  เติบโต %.1f/30 | ตามเป้า %.1f/40 | สุขภาพ %.1f/30\n",
-           r.growth,r.balance,r.weatherScore);
-    printf("  ตามเป้า: คิดจากส่วนที่ใกล้เป้าน้อยที่สุด\n");
     if (r.perfect) printf("  ป้าอิงชี้ไปที่ยอด “เห็นดอกตรงนั้นไหม บานแล้วลูก!”\n");
     heading("ป้าอิงฝากไว้");
     printf("  “%s”\n",ending(p,r,day->weather));

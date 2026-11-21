@@ -59,3 +59,4 @@ Mini planting menu 5 lists all 12 recipes without consuming crystals. Strict bui
 Added Mini team guide with gameplay, code flow, pointer explanation and the 100-point classroom rubric.
 PR 36: fixed recipe switch indentation and trimmed blank lines and trailing whitespace. Strict compile and recipe-to-ending smoke passed.
 Added comment-free Mini submission copy. Both strict builds passed; preprocessed output is identical. Edit the commented source first and refresh the submission copy.
+Mini removed in-game scoring; retained health, flowering and outcomes. Both C11 variants preprocess identically; recipe-to-ending smoke passed.
