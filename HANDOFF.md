@@ -57,3 +57,4 @@ Refined all 12 Mini portraits to nine rows of console art each. Strict build and
 Mini portraits now use distinct face shapes, eyes and accessories instead of a shared face. Strict build and full round passed; 596 lines.
 Mini planting menu 5 lists all 12 recipes without consuming crystals. Strict build and recipe-to-ending smoke passed; 600 lines.
 Added Mini team guide with gameplay, code flow, pointer explanation and the 100-point classroom rubric.
+PR 36: fixed recipe switch indentation and trimmed blank lines and trailing whitespace. Strict compile and recipe-to-ending smoke passed.
