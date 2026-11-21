@@ -13,7 +13,6 @@ typedef struct {
     int guest[VISITS], gift[VISITS];
 } Day;
 typedef struct {
-    double growth, balance, weatherScore;   // คะแนนรวม 100 / growth 30 / balance 40 / weatherScore 30
     int missing[3], health;
     int perfect;
 } Result;
@@ -144,34 +143,18 @@ int challenge_met(const int value[3], int weather_type) {
         if (value[i]<challenge[weather_type][i]) return 0;
     return 1;
 }
-/* คำนวณคะแนน 3 ด้าน growth, balance, weatherScore และ health ของต้นกล้า คืนเป็น struct Result */
-/* รับคะแนนของใบ/ราก/เปลือก และ index ของสภาพอากาศ (0=พายุ, 1=แล้ง, 2=แมลง) */
+/* ประเมินสุขภาพและตรวจว่าออกดอกได้ไหม */
 Result evaluate(const int v[3],int w) {
     Result r={0};
-    int low=v[0];                                                       // เซ็ทไว้เตรียมเอาไปหา minimum ของใบ/ราก/เปลือกใน ลูปหาคะแนน growth
-    double progress=1.0;
-    /* หาคะแนน growth (เต็ม 30) คำนวณจากสัดส่วนของใบ/ราก/เปลือกที่ได้เทียบกับ challenge ของวันนั้น แต่ละส่วนได้ไม่เกิน 10 คะแนน */
-    for(int i=0;i<3;i++) {
-    low=smaller(low,v[i]);
-    r.growth+=smaller(v[i],challenge[w][i])*10.0/challenge[w][i];       // smaller() เพื่อให้คะแนนไม่ทะลุ 10 แต้มต่อส่วน
-    double ratio=(double)v[i]/challenge[w][i];                          // คำนวณสัดส่วนของใบ/ราก/เปลือกที่ได้เทียบกับ challenge ของวันนั้น
-    if (ratio<progress) progress=ratio;                                 // เก็บสัดส่วนที่น้อยที่สุดของใบ/ราก/เปลือก เพื่อใช้คำนวณ balance score
-    }
-    /* คำนวณเกณฑ์คะแนนรากและเปลือกที่ต้องถึง นอกจากเงื่อนไขสภาพอากาศ คะแนนแต่ละส่วนต้องมากกว่าใบ(v[0])หรือครึ่งหนึ่งของใบเสมอ */
-     int rootGoal = 0, barkGoal = 0;
-     if (w == 0 || w == 1) rootGoal = larger(30, v[0]);
-     if (w == 0) barkGoal = larger(20, v[0] / 2);
-     if (w == 2) barkGoal = larger(30, v[0]);
-    /* คำนวณค่าที่ขาดของรากและเปลือก (larger เพื่อไม่ให้ค่าติดลบ) */
-     r.missing[1] = larger(0, rootGoal - v[1]);
-     r.missing[2] = larger(0, barkGoal - v[2]);
-    /* คำนวณ health ของต้นกล้า (เต็ม 100) โดยลดลง 2 คะแนนต่อส่วนที่ขาดของรากและเปลือก */
-     r.health=larger(0,100-2*(r.missing[1]+r.missing[2]));
-     /* สรุปและใส่ค่าคะแนนแต่ละส่วน */
-     if (low<10) r.health=0; //ถ้าต่ำกว่า 10 คะแนน ต้นกล้าเดรดทันที
-     r.weatherScore=.3*r.health;
-     r.perfect=challenge_met(v,w) && r.health==100;
-     r.balance=40*progress;
+    int rootGoal=0, barkGoal=0;
+    if (w==0 || w==1) rootGoal=larger(30,v[0]);
+    if (w==0) barkGoal=larger(20,v[0]/2);
+    if (w==2) barkGoal=larger(30,v[0]);
+    r.missing[1]=larger(0,rootGoal-v[1]);
+    r.missing[2]=larger(0,barkGoal-v[2]);
+    r.health=larger(0,100-2*(r.missing[1]+r.missing[2]));
+    if (v[0]<10 || v[1]<10 || v[2]<10) r.health=0;
+    r.perfect=challenge_met(v,w) && r.health==100;
     return r;
 }
 /* กลุ่มปกติ 5 ชิ้น (3 คน), กลุ่มขาด 2 ชิ้น (2 คน) = ลูกค้า 8 คน ชิ้น*/
@@ -441,7 +424,7 @@ void add_fertilizer(Plan *p, int mixing) { // 0-1 mixing รับมาจา�
             return;
         }
     }
-    int g = mixing ? 3-a/2-b/2 : a/2; // กลุ่มที่จะได้คะแนน
+    int g = mixing ? 3-a/2-b/2 : a/2; // ส่วนที่จะได้รับปุ๋ย
     int limit  = mixing ? smaller(p->bag[a],p->bag[b]) : p->bag[a]; // ใช้ได้สูงสุดกี่ชุด
     if (mixing) printf("%s + %s = %s → %s +10\n",crystal[a],crystal[b],recipe(a,b),part[g]);
     if (!limit) {
@@ -553,11 +536,6 @@ void morning(const Day *day,const Plan *p) {
             if (r.health<100) printf("    ต้องผ่านคืนนี้โดยไม่เสียสุขภาพด้วย\n");
         }
     }
-    printf("\n  คะแนนรวม %.0f/100%s\n",r.growth+r.balance+r.weatherScore,
-           r.perfect ? "   Perfect!" : "");
-    printf("  เติบโต %.1f/30 | ตามเป้า %.1f/40 | สุขภาพ %.1f/30\n",
-           r.growth,r.balance,r.weatherScore);
-    printf("  ตามเป้า: คิดจากส่วนที่ใกล้เป้าน้อยที่สุด\n");
     if (r.perfect) printf("  ป้าอิงชี้ไปที่ยอด “เห็นดอกตรงนั้นไหม บานแล้วลูก!”\n");
     heading("ป้าอิงฝากไว้");
     printf("  “%s”\n",ending(p,r,day->weather));
