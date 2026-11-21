@@ -62,3 +62,4 @@ Added comment-free Mini submission copy. Both strict builds passed; preprocessed
 Mini removed in-game scoring; retained health, flowering and outcomes. Both C11 variants preprocess identically; recipe-to-ending smoke passed.
 Added Mini-specific Thai TXT manual and code explanation with current submission line numbers.
 Expanded Mini TXT guides with all 21 functions and current health calculation examples.
+Active repo contains Mini only; legacy edition and its tests are recoverable from the pre-cleanup main revision. CI builds both Mini copies, checks equivalence and runs Mini smoke; backup validates the Mini source.
