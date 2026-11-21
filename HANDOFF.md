@@ -61,3 +61,4 @@ PR 36: fixed recipe switch indentation and trimmed blank lines and trailing whit
 Added comment-free Mini submission copy. Both strict builds passed; preprocessed output is identical. Edit the commented source first and refresh the submission copy.
 Mini removed in-game scoring; retained health, flowering and outcomes. Both C11 variants preprocess identically; recipe-to-ending smoke passed.
 Added Mini-specific Thai TXT manual and code explanation with current submission line numbers.
+Expanded Mini TXT guides with all 21 functions and current health calculation examples.
