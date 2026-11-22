@@ -72,3 +72,5 @@ Mini removed in-game scoring; retained health, flowering and outcomes. Both C11 
 Added Mini-specific Thai TXT manual and code explanation with current submission line numbers.
 Expanded Mini TXT guides with all 21 functions and current health calculation examples.
 Active repo contains Mini only; legacy edition and its tests are recoverable from the pre-cleanup main revision. CI builds both Mini copies, checks equivalence and runs Mini smoke; backup validates the Mini source.
+
+2026-11-23: Updated all 12 Mini customer dialogues, Aunt Ing opening and endings, and in-game instructions. Both C variants passed strict C11 builds, preprocessor equivalence, text-only diff verification and full-round checks for all three dialogue options.
